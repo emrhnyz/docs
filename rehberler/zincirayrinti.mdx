@@ -1,0 +1,110 @@
+# Testnet Zincir Detayları
+
+> Plasma Testnet ağına bağlanmak için yapılandırma referansı. Ana ağ lansmanı bu yılın ilerleyen zamanlarında planlanmaktadır.
+
+## Ağ Parametreleri
+
+| Parametre         | Değer                             | Açıklama                                                  |
+| ----------------- | --------------------------------- | --------------------------------------------------------- |
+| Ağ Adı            | `testnet`                         | Plasma için halka açık, sürekli test ağı. Sık sık sıfırlanır. |
+| Genel RPC         | `https://testnet-rpc.plasma.to`   | Halka açık, oran sınırlı RPC uç noktası.                  |
+| Zincir ID         | `9746`                            | Plasma Testnet için benzersiz tanımlayıcı.                |
+| Para Birimi Sembolü | `XPL`                           | Testnet’in yerel token sembolü.                           |
+| Blok Süresi       | ~1 saniye                         | Bloklar arasındaki ortalama süre.                         |
+| Konsensüs         | PlasmaBFT (Fast HotStuff varyantı) | Proof of Stake (Hisse İspatı) konsensüs mekanizması.      |
+| EVM Uyumluluğu    | Tam                               | Ethereum akıllı sözleşmeleriyle %100 uyumlu.              |
+
+## Bağlantı Uç Noktaları
+
+Genel bir HTTPS RPC uç noktası `testnet-rpc.plasma.to` adresinde mevcuttur.
+
+<Tip>
+  Hem HTTPS hem de WebSocket uç noktaları [RPC sağlayıcı partnerlerimiz](../../plasma-chain/tools/rpc-providers) aracılığıyla sunulmaktadır.
+</Tip>
+
+```shell
+curl --location 'https://testnet-rpc.plasma.to' --header 'Content-Type: application/json' --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}'
+```
+
+Bu çıktıya benzer bir yanıt dönmelidir:
+
+```output
+{"jsonrpc":"2.0","id":1,"result":"0x9f61b"}
+```
+
+### Blok Gezgini
+
+| Servis    | URL                                                              | Durum |
+| --------- | ---------------------------------------------------------------- | ------ |
+| Explorer  | [https://testnet.plasmascan.to/](https://testnet.plasmascan.to/) | Aktif  |
+
+## Gas ve Ücretler
+
+Plasma Testnet, aşağıdakiler dahil olmak üzere birden fazla token ile ücret ödemeyi destekler:
+
+| Token                        | Sembol | Durum         |
+| ---------------------------- | ------ | ------------- |
+| Yerel Plasma Testnet Token   | XPL    | Aktif         |
+| Testnet USD₮                | USD₮   | Geliştirme aşamasında |
+
+<Tip>
+  Ücretsiz USD₮ transferleri şu anda geliştirme aşamasında ve yakında test için sunulacak.
+</Tip>
+
+## Geliştirme Kaynakları
+
+### Musluklar (Faucets)
+
+| Token | URL                                                    | Durum         |
+| ----- | ------------------------------------------------------ | -------------- |
+| XPL   | [gas.zip/faucet/plasma](https://gas.zip/faucet/plasma) | Geliştirme aşamasında |
+
+## Zincir Yapılandırma Örnekleri
+
+### MetaMask İçin Ağ Yapılandırması
+
+Plasma Testnet'i MetaMask’e manuel olarak eklemek için:
+
+1. MetaMask’i açın → Ağ seçici → **Ağı manuel ekle**
+2. Aşağıdaki parametreleri kullanın:
+   * **Ağ Adı**: Plasma Testnet
+   * **RPC URL**: `https://testnet-rpc.plasma.to`
+   * **Zincir ID**: `9746`
+   * **Para Birimi Sembolü**: `XPL`
+   * **Blok Gezgini URL’si**:`https://testnet.plasmascan.to`
+
+Adım adım kılavuz için bkz. [Tarayıcı Cüzdan Kurulumu](../asset-management/browser-wallet-setup)
+
+### Hardhat
+
+```javascript
+// hardhat.config.js
+module.exports = {
+  networks: {
+    plasmaTestnet: {
+      url: "https://testnet-rpc.plasma.to",
+      chainId: 9746,
+      accounts: [process.env.PRIVATE_KEY]
+    }
+  }
+};
+```
+
+### Truffle
+
+```javascript
+// truffle-config.js
+module.exports = {
+  networks: {
+    plasmaTestnet: {
+      provider: () => new HDWalletProvider(MNEMONIC,
+        "https://testnet-rpc.plasma.to"),
+      network_id: 9746,
+      gas: 5500000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    }
+  }
+};
+```

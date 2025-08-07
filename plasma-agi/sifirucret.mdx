@@ -1,0 +1,108 @@
+# Sıfır Ücretli USD₮ Transferleri
+
+<Warning>
+  Bu özellik hâlen aktif geliştirme aşamasındadır. Performans, güvenlik ve uyumluluk için yaklaşımlar doğrulandıkça uygulama detayları değişebilir.
+</Warning>
+
+Plasma, USD₮ için protokol tarafından yönetilen bir paymaster sistemi ile gas’siz stablecoin ödemelerini mümkün kılar. Bu tasarım, kullanıcılar için ücret engelini ortadan kaldırır, geliştiriciler için entegrasyonu basitleştirir ve üçüncü taraf relayer’lar veya gas token yönlendirmesi ihtiyacını ortadan kaldırır.
+
+Sistem çok dar kapsamlıdır: yalnızca doğrudan USD₮ transferlerini sponsorlar; kötüye kullanımı önlemek için kimlik tabanlı kontroller ve öngörülebilir dahil olma için planlı bir blok alanı rezervasyon modeli içerir.
+
+## Nasıl Çalışır
+
+Plasma, doğrulanmış kullanıcıların XPL tutmadan USD₮ göndermesine olanak tanıyan özel bir paymaster sözleşmesini sürdürür. Sistem, benimsenmesi kolay, cüzdan bağımsız ve protokol tarafından işletilen mantıkla uygulanır.
+
+### 1. Paymaster Sözleşmesi
+
+Sistemin çekirdeği, tek bir kurala dayalı, genel amaçlı olmayan bir paymaster’dır: **yalnızca doğrulanmış USD₮ transferlerini sponsorla**.
+
+* Resmi USD₮ token’ına yapılan `transfer()` ve `transferFrom()` çağrılarına kısıtlanmıştır
+* Doğrulama durumu ve oran koşullarına göre uygunluğu doğrular
+* Gas maliyetlerini, Plasma Vakfı tarafından önceden finanse edilmiş XPL bakiyesi ile karşılar
+
+Paymaster tasarım gereği izoledir. Keyfi calldata geçişine veya genelleştirilmiş işlem sponsorluğuna izin vermez.
+
+### 2. Kimlik Doğrulama
+
+Spam veya Sybil saldırılarını önlemek için kullanıcılar, ücretsiz transferlere erişmeden önce hafif kimlik doğrulamasını tamamlamalıdır.
+
+Bu katman için aktif olarak değerlendirdiğimiz seçenekler arasında şunlar var:
+
+* zkEmail veya zkPhone tabanlı doğrulamalar
+* Cloudflare Turnstile veya Friendly Captcha
+* Süresi dolan imza tabanlı izin listeleri
+
+Bu sistemler zincir dışıdır ancak gizliliği korur. Doğrulamalar durumsuz olabilir, kullanıcı işlemine eklenebilir ve kimliği zincir üzerindeki durumla ilişkilendirmeden, herkese açık bir kök veya sözleşme tarafından doğrulanabilir.
+
+<Warning>
+  Bu özelliği olası saldırı vektörlerinden korumak için anti-spam özellikleri üzerinde sürekli olarak yenilik yapıyoruz.
+</Warning>
+
+### 3. Oran Sınırlamaları
+
+Kullanım, adil erişim ve maliyet kontrolünü sağlamak için cüzdan başına sınırlandırılır. Sınırlar şu şekilde uygulanabilir:
+
+* Sponsorlu USD₮ transferlerinde yuvarlanan bir üst limit (ör. 24 saatte 5 işlem)
+* Paymaster içinde, cüzdan geçmişini veya sponsorluk sıklığını kontrol eden bir koşul
+
+Bu mantığın tamamen zincir üzerinde mi yoksa kontrol noktalarıyla hibrit bir modelde mi çalışacağı değerlendirilmektedir. Uygulama, ister sözleşme depolaması ister imzaya bağlı sayaçlar aracılığıyla olsun, deterministik ve şeffaf olacaktır.
+
+### 4. Rezerve Blok Alanı (Planlanan)
+
+Yoğunluk altında öngörülebilir dahil olmayı garanti etmek için Plasma, Reth’in blok oluşturma mantığını değiştiren **öncelikli blok alanı modeli**ni araştırıyor.
+
+Bu şunları içerebilir:
+
+* Paymaster üzerinden yönlendirilen uygun USD₮ transferlerini etiketlemek
+* Bunları ayrılmış bir mempool veya mempool alt kümesine ayırmak
+* Reth’in blok oluşturucusunu, etiketlenmiş işlemler için bloğun gas’ının bir kısmını ayıracak şekilde değiştirmek
+
+Blok oluşturma sırasında bu rezerve edilmiş gas, öncelikle uygun transferlere tahsis edilir ve ücret rekabeti olmadan zamanında dahil olmayı sağlar. Kullanılmayan blok alanı genel kullanıma dönebilir.
+
+Bu, Plasma’nın yürütme katmanına daha derin entegrasyon için potansiyel bir yoldur. EVM mantığında değişiklik gerektirir ancak blok dahil olma garantilerinde anlamlı iyileştirmeler sağlar. Bu mekanizma ilk sürüm için gerekli değildir, ancak gelecekteki yükseltmeler için araştırılmaktadır.
+
+### 5. Cüzdan Uyumluluğu
+
+Herhangi bir EVM uyumlu cüzdan, değişiklik yapmadan gas’siz USD₮ transferlerini destekleyebilir. Paymaster sistemi şunlarla uyumludur:
+
+* EIP-4337 akıllı sözleşme hesapları
+* Geliştirilmiş EOA’lar için EIP-7702 akışları
+* Paymaster uyumlu bundler’larla entegre standart cüzdanlar
+
+Protokole özgü SDK’lar veya cüzdan çatalları gerekmez. Cüzdan ortakları, uygunluğu, kullanım limitlerini ve yedek davranışları doğrudan kullanıcı arayüzünde gösterebilecektir.
+
+## Finansman ve Ekonomi
+
+Paymaster, Plasma Vakfı tarafından finanse edilir. Gas maliyetleri, sponsorluk anında karşılanır, sonradan geri ödenmez. Kullanıcıların XPL tutmasına veya ön ödeme yapmasına gerek yoktur.
+
+Sistem herhangi bir şey basmaz veya ödül dağıtmaz. Sübvansiyonlar:
+
+* Şeffaf ve gözlemlenebilir
+* Yalnızca gerçek USD₮ transferleri gerçekleştiğinde harcanır
+* Doğrulama ve oran sınırlamaları ile kontrol edilir
+
+Gelecekteki yükseltmeler, sistemi finanse etmek için gas tabanlı doğrulayıcı gelirini mümkün kılabilir, ancak ilk sürüm doğrudan vakıf tarafından desteklenecektir.
+
+## Neden Önemli
+
+Stablecoin transferleri, Plasma’nın temel kullanım senaryosudur. Ancak ücret engeli, özellikle yüksek frekanslı veya düşük değerli akışlarda benimsemeyi sınırlar.
+
+Sıfır ücretli USD₮ transferlerini zincir-yerel bir özellik olarak sunarak Plasma şunları yapabilir:
+
+* Cüzdanların gas token’larına ihtiyaç duymadan kullanıcı deneyimini iyileştirmek
+* Gelişmekte olan pazarlarda akıllı sözleşme benimsemesini mümkün kılmak
+* Mesajlaşma, mikro ödemeler ve ticaret için stablecoin akışlarını uygulanabilir kılmak
+
+Bu sistem, EVM standartlarını bozmadan, yeni cüzdan gerektirmeden veya gizli karmaşıklık eklemeden çalışır.
+
+## Ne Beklenmeli
+
+Sıfır ücretli USD₮ transferleri, ana ağ beta lansmanından kısa süre sonra devreye alınacaktır.
+
+İlk sürüm şunları içerecek:
+
+* Protokol tarafından işletilen bir EIP-4337 paymaster
+* Uygunluk için hafif kimlik doğrulama
+* Cüzdanlar ve geliştiriciler için entegrasyon örnekleri ve testnet erişimi
+
+Gelecekteki yükseltmeler, ek stablecoin desteği, daha derin blok oluşturma entegrasyonu ve geliştirilmiş araçlar ekleyebilir.

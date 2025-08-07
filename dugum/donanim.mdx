@@ -1,0 +1,147 @@
+# Donanım Gereksinimleri
+
+> Farklı düğüm yapılandırmaları için ayrıntılı donanım özellikleri.
+
+Bir Plasma düğümü çalıştırmak, performans, güvenilirlik ve maliyet verimliliğini sağlamak için dikkatli bir donanım seçimi gerektirir. Bu kılavuz, çeşitli dağıtım senaryoları için donanım önerilerini özetler ve testnet sırasında henüz kullanılamayan konsensüs katılımı yerine doğrulayıcı olmayan düğümlere odaklanır.
+
+<Warning>
+  **İletişim Gerekli**: Lütfen düğüm dağıtmadan önce bilgilerinizi [buradan](./operator-onboarding) gönderin.
+</Warning>
+
+## Geliştirme ve Üretim Ortamları
+
+Donanım gereksinimleri, geliştirme ve üretim arasında değişkenlik gösterir. Maliyet, performans ve operasyonel riski dengelemek için uygun katmanı seçin.
+
+### Geliştirme ve Test
+
+Deney, prototipleme veya yerel geliştirme için düşük maliyetli donanım kullanın.
+
+**Minimum Özellikler:**
+
+* 2 CPU çekirdeği (herhangi bir modern mimari).
+* 4 GB RAM.
+* 100 GB SSD depolama.
+* Standart internet bağlantısı (10+ Mbps).
+
+**Uygun Bulut Sunucuları:**
+
+<Columns cols={3}>
+  <Card title="Amazon Web Services" icon="amazon">
+    `t3.small`  
+    `t3.medium`
+  </Card>
+
+  <Card title="Google Cloud Products" icon="google">
+    `e2-small`  
+    `e2-medium`
+  </Card>
+
+  <Card title="Microsoft Azure" icon="microsoft">
+    `B2s`  
+    `B2ms`
+  </Card>
+</Columns>
+
+**Maliyet Düşünceleri:**
+
+<Note>
+  Geliştirme düğümleri maliyet tasarrufu için burstable örnekler (geçici yüksek performans sunan) kullanabilir. Kritik olmayan testler için spot örnekler uygundur. Yerel geliştirme genellikle dizüstü/bilgisayar makinelerde yeterlidir.
+</Note>
+
+### Üretim Ortamları
+
+Güvenilirlik, düşük gecikme süresi ve kesintisiz çalışma garantisi gereken uygulamalar için.
+
+**Önerilen Özellikler:**
+
+* 4+ CPU çekirdeği (yüksek saat hızı tercih edilir).
+* 8+ GB RAM.
+* 500+ GB NVMe SSD depolama.
+* Düşük gecikmeli internet bağlantısı (100+ Mbps).
+* Tercihen yedekli ağ bağlantısı.
+
+## Bulut Sağlayıcı Önerileri
+
+Aşağıda, geliştirme ve üretim kullanım senaryoları için sağlayıcıya özel örnek önerileri bulunmaktadır:
+
+<Card icon="AWS">
+  ### Amazon Web Services (AWS)
+
+  AWS, küresel erişim ve olgun blok zinciri altyapısı desteği ile geniş örnek seçenekleri sunar.
+
+  **Geliştirme örnekleri:**
+
+  * `t3.small`: 2 vCPU, 2 GB RAM, değişken performans.
+  * `t3.medium`: 2 vCPU, 4 GB RAM, burstable CPU kredileri.
+
+  **Üretim örnekleri:**
+
+  * `c6a.large`: 2 vCPU, 4 GB RAM, yüksek CPU performansı.
+  * `c6a.xlarge`: 4 vCPU, 8 GB RAM, tutarlı yüksek performans.
+  * `m6i.xlarge`: 4 vCPU, 16 GB RAM, dengeli işlem ve bellek.
+
+  **Depolama önerileri:**
+
+  * `gp3` hacimleri maliyet etkin performans sağlar.
+  * Yüksek trafikli RPC uç noktaları için sağlanan IOPS.
+  * Veri koruması için düzenli yedekler.
+</Card>
+
+<Card icon="Google">
+  ### Google Cloud Platform (GCP)
+
+  GCP, özellikle işlem yoğun iş yükleri için rekabetçi fiyatlandırma ve güçlü performans sunar.
+
+  **Geliştirme örnekleri:**
+
+  * `e2-small`: 2 vCPU, 2 GB RAM, maliyet optimizasyonlu.
+  * `e2-medium`: 2 vCPU, 4 GB RAM, dengeli performans.
+
+  **Üretim örnekleri:**
+
+  * `c2-standard-4`: 4 vCPU, 16 GB RAM, yüksek performanslı CPU.
+  * `n2-standard-4`: 4 vCPU, 16 GB RAM, dengeli iş yükleri.
+  * `c2-standard-8`: 8 vCPU, 32 GB RAM, yüksek trafik senaryoları.
+
+  **Depolama önerileri:**
+
+  * Tüm dağıtımlar için SSD kalıcı diskler.
+  * Üretim düğümleri için daha yüksek IOPS.
+  * Yedekleme ve kurtarma için otomatik anlık görüntüler.
+</Card>
+
+<Card icon="Microsoft">
+  ### Microsoft Azure
+
+  Azure, özellikle kurumsal dağıtımlar için entegre hizmetleri ve rekabetçi fiyatlandırmaları ile öne çıkar.
+
+  **Geliştirme örnekleri:**
+
+  * `B2s`: 2 vCPU, 4 GB RAM, burstable performans.
+  * `B2ms`: 2 vCPU, 8 GB RAM, daha yüksek temel performans.
+
+  **Üretim örnekleri:**
+
+  * `F4s_v2`: 4 vCPU, 8 GB RAM, işlem odaklı.
+  * `D4s_v5`: 4 vCPU, 16 GB RAM, genel amaçlı.
+  * `F8s_v2`: 8 vCPU, 16 GB RAM, yüksek performanslı seçenek.
+
+  **Depolama önerileri:**
+
+  * Üretim iş yükleri için Premium SSD.
+  * Geliştirme için Standart SSD yeterlidir.
+  * Otomatik veri koruması için Azure Backup.
+</Card>
+
+## Başlarken
+
+Uygun donanım ile bir Plasma doğrulayıcı olmayan düğüm çalıştırmak için:
+
+1. **Gereksinimlerinizi değerlendirin**: Geliştirme mi yoksa üretim altyapısı mı gerektiğini belirleyin.
+2. **Bilgilerinizi gönderin**: Dağıtım bilgilerini almak için [ekibimizle iletişime geçin](./operator-onboarding).
+3. **Bulut sağlayıcısını seçin**: Coğrafi ihtiyaçlarınıza, mevcut ilişkilerinize ve fiyat tercihinize göre karar verin.
+4. **İzleme yapılandırması yapın**: Performansı baştan takip edebilmek için gerekli izlemeyi kurun.
+5. **Kademeli dağıtım yapın**: Minimum geçerli özelliklerle başlayın ve kullanım modellerine göre ölçekleyin.
+6. **Büyüme planı yapın**: Gelecekteki ölçekleme ihtiyaçlarını büyük mimari değişikliklere gerek kalmadan karşılayacak şekilde altyapınızı tasarlayın.
+
+Ayrıntılı dağıtım talimatları ve yapılandırma rehberliği için [Genel Bakış](../setup-and-configuration/overview) ve [Doğrulayıcı Olmayan Düğüm Kurulumu](./non-validator-node-setup) bölümlerine geçin.

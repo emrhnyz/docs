@@ -1,0 +1,51 @@
+# Ağ Ücretleri
+
+Bu sayfa, Plasma ağında işlem ücretlerinin nasıl çalıştığını; özel gas token desteği ve sıfır ücretli USD₮ transferlerini de dahil ederek açıklar.
+
+## Plasma’da Gas
+
+Plasma, işlemlerin ve sözleşme yürütmelerinin hesaplama maliyetini ölçmek için standart EVM gas modelini kullanır. Gas ücretleri, ağı güvence altına alan ve işlemleri işleyen doğrulayıcılara ödeme olarak verilir. Ethereum’da olduğu gibi, toplam işlem maliyeti şu şekilde hesaplanır:
+
+`Toplam Ücret = Kullanılan Gas × Gas Fiyatı`
+
+Plasma, düşük ve öngörülebilir gas fiyatlarını koruyacak şekilde tasarlanmıştır. Çoğu standart işlem 1 cent’ten az tutar ve yürütme maliyetleri, geliştiricilerin aşina olması için Ethereum ile uyumlu tutulur.
+
+## Temel Özellikler
+
+### 1. Sıfır Ücretli USD₮ Transferleri
+
+Plasma, uygun USD₮ transferleri için gas ücretini karşılayan protokol tarafından yönetilen bir paymaster sözleşmesi içerir. Bu sözleşme, protokol seviyesinde tanımlanan hafif kimlik kontrolleri ve oran sınırlamaları temelinde `transfer` ve `transferFrom` çağrılarının gas ücretlerini karşılar.
+
+Bu sayede geliştiriciler, Plasma Vakfı’nın maliyet kontrolü ve uygunluk mantığını sürdürdüğü tamamen ücretsiz stablecoin ödeme akışları oluşturabilir.
+
+### 2. Özel Gas Token’ları
+
+Plasma, yerel bir paymaster sözleşmesi aracılığıyla özel gas token’larını destekler. Geliştiriciler, uygulamalarında gas olarak kullanılmak üzere beyaz listeye alınmış ERC-20 token’larını (stablecoin veya ekosistem token’ları gibi) kaydedebilir.
+
+Harici paymaster’ların aksine, Plasma’nın gas token paymaster’ı protokol tarafından yönetilir ve ücret almaz. Bu, projelerin kullanıcı deneyiminden XPL’yi kaldırmasına ve kullanıcıların ellerinde zaten bulunan token’larla ücret ödemesine olanak tanır.
+
+### 3. Öngörülebilir Maliyetler ve Yüksek İşlem Kapasitesi
+
+Plasma, Ethereum’un gas maliyeti yapısını yansıttığı için geliştiriciler, yaygın işlemler için tanıdık fiyatlar bekleyebilir.
+
+Fark performansta ortaya çıkar. Plasma’nın boru hattı konsensüsü ve yüksek işlem kapasitesi, yoğunluk altında bile hızlı ve güvenilir işlem dahilini garanti eder.
+
+## Geliştirici Notları
+
+### Sıfır Ücretli USD₮ İşlemleri
+
+Sıfır ücretli USD₮ transferlerini entegre etmek için Plasma’nın paymaster uyumlu cüzdan akışını kullanın. Paymaster sözleşmesi yalnızca yerel transfer ve transferFrom çağrılarını karşılar. Oran sınırlamaları ve uygunluk kontrolleri otomatik olarak uygulanır.
+
+Bu akış, EIP-4337 ve EIP-7702 akıllı hesaplarıyla tamamen uyumludur.
+
+### Özel Gas Token Entegrasyonu
+
+Özel gas token’larını desteklemek için geliştiriciler, token’larını protokol paymaster’ına kaydedebilir ve uygulamalarında ücretlerin bu token ile ödenmesini sağlayabilir. Bu, yerel stablecoin’ler, ekosistem teşvikleri ve kullanıcı deneyimi basitleştirmesi için kullanışlıdır.
+
+## Neden Önemli?
+
+Ücret soyutlama, kripto dünyasında en büyük kullanıcı deneyimi engellerinden biridir. Plasma, stablecoin uygulamaları için bu engeli ortadan kaldırır.
+
+Kullanıcılar, XPL tutmadan USD₮ gönderebilir. Uygulamalar, ücretleri soyutlayabilir veya yerel stablecoin cinsinden belirleyebilir. Geliştiriciler, yerel token’ları sarmalama veya kendi paymaster’larını dağıtma karmaşıklığından kaçınır.
+
+Bu tasarım tercihleri, Plasma’yı sınır ötesi ödemelerden perakende cüzdanlara, stablecoin tabanlı DeFi’ye kadar maliyet hassasiyetine sahip, yüksek hacimli uygulamalar için ideal hale getirir.

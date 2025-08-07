@@ -1,0 +1,68 @@
+# Farklar: Ethereum ve Plasma
+
+Plasma, stablecoin ödemelerini ölçekli şekilde gerçekleştirmek için özel olarak inşa edilmiş, yüksek performanslı, EVM uyumlu bir Layer 1 blok zinciridir. Ethereum’un temel mimarisini ve geliştirici deneyimini korurken, performans, ücret soyutlama ve stablecoin-yerel özelliklerde yapısal iyileştirmeler sunar.
+
+<Check>
+  Ethereum’da çalışan herhangi bir akıllı sözleşme, Plasma üzerinde değişiklik yapmadan çalışabilir.
+</Check>
+
+## Benzer Olanlar
+
+Plasma, hem kullanıcılar hem de geliştiriciler için sorunsuz bir deneyim sağlamak amacıyla Ethereum’un yürütme ve işlem modelini bilinçli olarak korur.
+
+* **EVM Uyumluluğu**: Plasma, Solidity, Vyper ve tüm standart Ethereum sözleşme davranışlarını destekler.
+* **Cüzdan Desteği**: MetaMask, WalletConnect ve diğer EVM uyumlu cüzdanlar kutudan çıkar çıkmaz çalışır.
+* **İşlem Formatı**: Plasma, EIP-1559 dinamik ücretler dahil olmak üzere Ethereum ile aynı işlem türlerini kullanır.
+* **Araçlar ve Kütüphaneler**: Foundry, Hardhat, web3.js, ethers.js ve yaygın SDK’lar tamamen desteklenir.
+* **Hesap Modeli**: Plasma, Ethereum’un hesap modeli ve durum yapısını kullanır, akıllı hesaplarla (EIP-4337 ve EIP-7702) tam uyumluluğu korur.
+
+Geliştiricilerin yeni bir teknoloji yığını öğrenmesine veya sözleşmelerini uyarlamasına gerek yoktur. Mevcut iş akışları ve geliştirme ortamları doğrudan Plasma’ya taşınabilir.
+
+## Farklı Olanlar
+
+Ethereum genel amaçlı bir zincirken, Plasma stablecoin’ler için özel olarak geliştirilmiştir. Mimarisi ve protokol tasarımı, stablecoin odaklı uygulamalarda performans, maliyet verimliliği ve kullanıcı deneyimini artıran önemli değişiklikler sunar.
+
+### 1. Zaman Damgası Hassasiyeti
+
+Plasma, bloklar için **milisaniye tabanlı zaman damgaları** kullanır; Ethereum ise saniye tabanlı zaman damgaları kullanır. Bu, daha ayrıntılı işlem sıralaması ve yüksek hacimli stablecoin faaliyetleri için daha iyi destek sağlar. Reth, bu formatı destekleyecek şekilde değiştirilmiştir ve yüksek performanslı zincirler arasındaki modern standartlarla uyumludur. Geliştiriciler, araçlarının hem 10 basamaklı (saniye) hem de 13 basamaklı (milisaniye) zaman damgalarını işleyebildiğinden emin olmalıdır.
+
+### 2. Stablecoin’ler için Optimize Edilmiş
+
+Plasma, yüksek hacimli ve düşük ücretli stablecoin işlemleri için baştan sona inşa edilmiştir. Sıfır ücretli USD₮ transferleri, özel gas token’ları ve gizli ödeme akışları gibi özellikler protokol tarafından doğrudan yönetilir ve stablecoin’e özgü kullanım senaryolarına hizmet edecek şekilde tasarlanır.
+
+Ethereum, stablecoin kullanıcı deneyimi için yerel destek sunmaz. Plasma’da ise bu akışlar birinci sınıf vatandaştır.
+
+### 3. Protokol Paymaster ile Sıfır Ücretli Transferler
+
+Plasma, protokol seviyesinde ücret soyutlamayı destekler. Örneğin, USD₮ transferleri, Plasma Vakfı tarafından yönetilen yerel bir paymaster kullanılarak son kullanıcılar için gas’siz yapılabilir. Paymaster, işlem türünü doğrular, oran sınırlamaları uygular ve gas’ı yönetilen XPL bakiyesinden karşılar.
+
+Ethereum’da buna eşdeğer yerel bir gas soyutlama mekanizması yoktur.
+
+### 4. Özel Gas Token Desteği
+
+Plasma, beyaz listeye alınmış ERC-20 token’larının gas olarak kullanılmasına izin verir. Geliştiriciler, stablecoin’leri veya ekosistem token’larını protokolün özel gas paymaster’ına kaydederek kullanıcıların XPL tutmadan işlem ücretlerini ödemesine olanak tanır.
+
+Ethereum, tüm ücretlerin ETH ile ödenmesini zorunlu kılar; aksi halde geliştiricilerin kendi karmaşık paymaster altyapılarını yönetmeleri gerekir.
+
+### 5. Yüksek Performanslı Konsensüs
+
+Plasma, işlem kesinliği ve işlem hacmi için optimize edilmiş, Fast HotStuff’un boru hattı (pipelined) uygulamasını kullanır. Konsensüs protokolünü birden fazla paralel sürece ayırarak, Plasma gecikmeyi önemli ölçüde azaltır ve yük altında işlem kapasitesini artırır.
+
+Ethereum şu anda slot tabanlı konsensüs nedeniyle hem daha yüksek hem de değişken gecikme sürelerine sahip kesinlik mekanizmaları kullanır.
+
+### 6. Yerel Bitcoin Köprüsü
+
+Plasma, zamanla merkeziyetsizleşecek doğrulayıcılar ağı tarafından güvence altına alınan güvene en az bağımlı bir Bitcoin köprüsü içerir. BTC, saklayıcılar veya sarılmış varlıklar olmadan doğrudan EVM ortamına taşınabilir, böylece yeni programlanabilir Bitcoin kullanım senaryoları ortaya çıkar.
+
+Ethereum, BTC’ye erişim için harici köprüler veya saklamalı (custodial) sarılı varlıklar gerektirir.
+
+## Özet
+
+| Özellik                       | Ethereum                     | Plasma                                |
+| ----------------------------- | ---------------------------- | ------------------------------------- |
+| EVM Uyumluluğu                | ✅ Tam                        | ✅ Tam                                 |
+| Sıfır Ücretli Stablecoin Transferleri | ❌ Yok                        | ✅ USD₮ için yerel paymaster           |
+| Özel Gas Token’ları            | ❌ Harici altyapı gerekli     | ✅ Protokol paymaster ile desteklenir  |
+| Stablecoin-Yerel Sözleşmeler   | ❌ Yok                        | ✅ Protokol tarafından yönetilir       |
+| Konsensüs Tasarımı             | Slot tabanlı kesinlik (Casper) | Boru hattı Fast HotStuff               |
+| Bitcoin İnteroperabilitesi     | ❌ Harici köprü gerekli       | ✅ Yerel, güvene en az bağımlı BTC köprüsü |

@@ -1,0 +1,191 @@
+# Sorun Giderme
+
+> Yaygın sorunlar, tanılamalar ve çözüm prosedürleri
+
+Bu rehber, doğrulayıcı olmayan düğümleri etkileyen yaygın problemleri, pratik tanılama ve çözüm adımlarıyla birlikte açıklar. Hızlı sorun giderme, RPC erişilebilirliğini ve stablecoin işlem verilerine güvenilir erişimi sağlamak için kritiktir.
+
+<Note>
+  Çoğu sorun; sistem kaynak sınırları, konsensüs uç noktalarıyla ağ bağlantısı ya da yanlış yapılandırmadan kaynaklanır. Her zaman önce temel sağlık kontrolleriyle başlayın, ardından Plasma’ya özel uç senaryoları araştırın.
+</Note>
+
+## Senkronizasyon Sorunları
+
+### Düğüm Geride Kalıyor
+
+Eğer düğümünüz ağın başından geri kalıyorsa:
+
+* **Sistem yükünü kontrol edin**: CPU, bellek ve I/O; Plasma’nın yüksek frekanslı blok üretimi için yeterli olmalı.
+* **Konsensüs uç noktası gecikmesini kontrol edin**: Yüksek gecikme, blok alım hızını etkiler.
+* **Veritabanı performansını izleyin**: Yavaş sorgular veya kilitlenmeler senkronizasyona engel olabilir.
+
+**Tanılama:**
+
+* `block_height` ve ağ başı farkı
+* Blok başına durum uygulama süresi
+* Her bir konsensüs uç noktasına olan gecikme
+
+### Senkronizasyon Tamamen Duruyor
+
+Eğer senkronizasyon durduysa:
+
+* **Disk alanını kontrol edin**: Dolu diskler veritabanı yazmalarını durdurur.
+* **Uç nokta bağlantısını doğrulayın**: DNS çözümlemesi, güvenlik duvarı kuralları ve yönlendirme trafiği engellemiyor olmalı.
+* **Konteyner kaynak sınırlarını kontrol edin**: Yetersiz bellek veya CPU, senkronizasyon işlemlerini çökertir.
+
+**Plasma’ya özgü kontroller:**
+
+* Uç nokta erişilebilirliği
+* Geçerli JWT tokenları / izin listesi durumu
+* Doğrulayıcı olmayan düğüm sürüm uyumluluğu
+
+### Zayıf Peer Bağlantısı
+
+Konsensüs uç noktalarına sınırlı veya dengesiz bağlantılar, RPC tüketicileri için veri tazeliğini azaltır.
+
+**Kontrol et:**
+
+* IP kısıtlamaları veya yönlendirme politikaları
+* Uç nokta bağlantı sayısı ve çalışma süresi
+* Birden fazla uç nokta arasında failover davranışı
+
+**İzlenecek metrikler:**
+
+* Aktif bağlantılar
+* Bağlantı kopma oranı
+* Blok gecikmesi
+
+## Ağ Bağlantısı
+
+### Port ve Güvenlik Duvarı Erişimi
+
+Gerekli portların açık olduğundan emin olun:
+
+* **Konsensüs iletişimi**
+* **Uygulamalara RPC sunumu**
+
+Yaygın engeller: kurumsal güvenlik duvarları, bulut güvenlik grupları, hatalı yapılandırılmış iptables kuralları.
+
+**Doğrula:**
+
+* Dışarıdan ve konteyner içinden port erişilebilirliği
+* Konsensüs senkronizasyonu için izin verilen çıkış trafiği
+
+### DNS Hataları
+
+Çözümlenemeyen konsensüs alan adları senkronizasyonu bozar.
+
+* Tüm Plasma servis alan adları için DNS çözümlemesini doğrulayın
+* Çözücü gecikmesini ve güvenilirliğini izleyin
+* Gerekirse alternatif çözücüler ekleyin
+
+### Proxy ve NAT Sorunları
+
+VPN, proxy, NAT gibi karmaşık ağ ortamları aşağıdakilere müdahale edebilir:
+
+* Konsensüs senkronizasyonu
+* RPC gelen erişimi
+
+**Doğrula:**
+
+* Proxy kimlik doğrulama kuralları
+* RPC için NAT port yönlendirmeleri
+* Plasma altyapısına yönlendirme yolları
+
+## Yapılandırma Hataları
+
+### Geçersiz Doğrulayıcı Olmayan Yapılandırma
+
+Başlangıç hataları genellikle şunlardan kaynaklanır:
+
+* Eksik veya hatalı konsensüs uç noktaları
+* Hatalı URL’ler veya JWT tokenlar
+* Kullanımdan kalkmış veya desteklenmeyen bayraklar
+
+**Günlüklerde kontrol et:**
+
+* Yapılandırma ayrıştırma hataları
+* Zincir kimliği uyumsuzlukları
+* Bilinmeyen bayraklar veya seçenekler
+
+### Docker Sorunları
+
+Yanlış yapılandırılmış konteynerler normal çalışmayı engelleyebilir.
+
+**Doğrula:**
+
+* Veritabanı kalıcılığı için volume mount’ları
+* Konteyner içi ağ erişimi
+* Kaynak sınırları (CPU, bellek)
+* Görüntü sürüm uyumluluğu
+
+### Ortam Değişkeni Çakışmaları
+
+Çakışan veya sırasız ortam değişkenleri, istenmeyen ayarların üzerine yazabilir.
+
+**Doğrula:**
+
+* Konsensüs uç noktası URL’leri ve tokenlar
+* Ağ ve zincir kimliği
+* Özellik bayrakları (örn. özel gas desteği)
+
+Ortam değişkeni kullanımını belgeleyin; dağıtımlar arasında uyumsuzluğu önleyin.
+
+## Kaynak Sınırları
+
+### Disk Alanı
+
+Aşağıdakiler nedeniyle disk kullanım artışını izleyin:
+
+* Blockchain verisi
+* Günlükler ve geçici dosyalar
+
+**En iyi uygulamalar:**
+
+* Günlük döndürme (log rotation) uygulayın
+* Temizlik görevleri zamanlayın
+* Kullanım uyarılarını izleyin
+
+### Dosya Tanıtıcıları
+
+Düşük `ulimit` değerleri şunları bozabilir:
+
+* Konsensüs bağlantıları
+* RPC oturumları
+
+`ulimit`, systemd veya konteyner yapılandırmalarıyla dosya tanıtıcı sınırlarını artırın.
+
+## Tanılama
+
+### Günlük Analizi
+
+Günlükleri kullanarak şunları izleyin:
+
+* Senkronizasyon ilerlemesi
+* RPC hataları
+* Konsensüs bağlantısı
+* Kaynakla ilgili çöküşler
+
+**En iyi uygulamalar:**
+
+* **Konsensüs senkronizasyon günlükleri**: Plasma ile bağlantı ve ilerleme takibi.
+* **İşlem işleme günlükleri**: İşlem hatalarını ve işlenmesini izleyin.
+* **RPC istek günlükleri**: Uygulama istek desenlerini ve performansını analiz edin.
+* **Kaynak kullanım günlükleri**: Ödeme işlemlerini etkileyen darboğazları belirleyin.
+
+### Performans Profilleme
+
+Doğrulayıcı olmayan iş yüklerini profilleyin, darboğazları belirleyin:
+
+* RPC performansı
+* Veritabanı sorgu gecikmesi
+* Konsensüs durum uygulaması
+
+**Odaklanılacak alanlar:**
+
+* Bakiye kontrolü işleme hacmi
+* Transfer onayı gecikmesi
+* Yük altındaki kaynak kullanımı
+
+Temel performans seviyelerini koruyun, yükseltmeler veya yapılandırma değişikliklerinden sonra değişiklikleri takip edin.
+
+Sistematik sorun giderme ve gözlemlenebilirlik, doğrulayıcı olmayan düğümlerin güvenilir çalışması için kritik öneme sahiptir. Uygun tanılama, günlükleme ve yapılandırma disiplini, stablecoin altyapısını destekleyen RPC servisleri için istikrarlı performans ve kesintisiz çalışma sağlar.

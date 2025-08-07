@@ -1,0 +1,81 @@
+# Genel Bakış
+
+> Plasma’nın modüler node (düğüm) mimarisi ve operatör rolleri hakkında genel bilgi.
+
+## TL;DR
+
+* Plasma, blok önerip sonlandıran doğrulayıcı (validator) düğümleri ile zinciri takip eden ve RPC sağlayan doğrulayıcı olmayan (non-validator) düğümleri ayırır.
+* Bu mimari sayesinde Plasma:
+  * Doğrulayıcı setini küçük ve güvenli tutar
+  * RPC sağlayıcılarının bağımsız şekilde ölçeklenmesine izin verir
+  * Konsensüs veya ağ riskini artırmaz
+
+## Üst Düzey Mimari
+
+| **Katman**              | **Rol**                                            | **Güven Modeli**           |
+| :---------------------- | :------------------------------------------------- | :-------------------------- |
+| Konsensüs Katmanı (CL)  | Blokları önermek ve sonlandırmak                   | PlasmaBFT                   |
+| Yürütme Katmanı (EL)    | İşlemleri yürütmek, durumu yönetmek, RPC sunmak    | Eşleştiği CL’ye tamamen güvenir |
+
+Her doğrulayıcı, doğrudan bağlı bir konsensüs düğümü ve yürütme düğümü çalıştırır. Ortakları haricinde, düğümler kendi katmanlarındaki eşleriyle (CL↔CL, EL↔EL) iletişim kurar. Bu ayrım sistemi öngörülebilir, güvenli ve anlaşılır kılar.
+
+### Ölçekleme Sorunu
+
+Kullanım arttıkça daha fazla uygulama ve kullanıcı, zincir verisine erişmek veya işlem göndermek için RPC erişimine ihtiyaç duyar. Ancak her yeni yürütme düğümünün bir konsensüs düğümü ile eşleşmesi gerekiyorsa, bu yapı verimsizleşir ve doğrulayıcı setini şişirir.
+
+Yalnızca okuma taleplerini karşılamak için RPC sağlayıcılarının doğrulayıcı çalıştırması mantıklı değildir ve Plasma'nın performans hedefleriyle uyuşmaz.
+
+### Çözüm: Doğrulayıcı Olmayan Düğümler
+
+Doğrulayıcı olmayan düğümler, konsensüs düğümleri gibi davranır ancak konsensüse katılmaz. Bunun yerine, sonlandırılmış bloklar ve fork-choice güncellemeleri için güvenilen bir doğrulayıcıyı **takip ederler**.
+
+Temel davranışlar:
+
+* Bir doğrulayıcının konsensüs düğümüne **abone olurlar**.
+* Gerçek bir doğrulayıcının göreceği fork-choice durumunu **yansıtırlar**.
+* **Sadece okurlar**, bu yüzden yük oluşturmaz veya güvenlik riski yaratmazlar.
+
+Uygulamalar açısından bir doğrulayıcı olmayan düğüm, tam node gibi davranır: RPC taleplerine yanıt verebilir ve güncel durumu gösterebilir. Ancak blok öneremez veya oy veremez.
+
+### Bu Tasarımın Faydaları
+
+| **Hedef**                      | **Doğrulayıcı Olmayan Düğümlerin Katkısı**                                                                                         |
+| :---------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| Doğrulayıcı setini küçük tutmak | Oy vermezler, sadece gerçek doğrulayıcılar oy verir.                                                                                 |
+| Yatayda sınırsız ölçekleme     | RPC sağlayıcılar, yeni doğrulayıcıya gerek olmadan yüzlerce node kurabilir.                                                          |
+| Konsensüs doğruluğunu korumak | Her yürütme düğümü yalnızca bir CL’yi takip eder, durum sapması riski yoktur.                                                       |
+| Riski azaltmak                | Salt-okunur yapıdadır, konsensüse etki edemezler.                                                                                     |
+| Yedekleme kolaylığı           | Birden fazla doğrulayıcıyı takip edebilirler, biri çevrimdışına çıkarsa diğerine geçiş yapabilirler.                                 |
+
+### Karşılaştırmalı Özet
+
+| Özellik                  | Doğrulayıcılar                   | Doğrulayıcı Olmayan Düğümler |
+| :----------------------- | :------------------------------- | :--------------------------- |
+| Konsensüs Katılımı       | Tam (önerir, oy verir, sonlandırır) | Yok (sadece dinler)          |
+| Mesaj Türleri            | Tüm konsensüs mesajları          | Yalnızca blok mesajları      |
+| Ağ Rolü                  | Aktif katılımcı                  | Pasif takipçi                |
+| Kaynak Gereksinimi       | Yüksek (tam konsensüs)           | Düşük (sadece mesajlaşma)    |
+
+## Aşamalı Merkeziyetsizleşme
+
+Plasma, [aşamalı merkeziyetsizlik modeli](https://a16zcrypto.com/posts/article/progressive-decentralization-crypto-product-management/) benimser. Başlangıçta tüm doğrulayıcılar Plasma ekibi tarafından çalıştırılır. Bu, stabilite, performans ve geliştirici deneyimini ön planda tutmak içindir.
+
+Merkeziyetsizlik uzun vadeli bir hedeftir ve üç aşamada gerçekleşir:
+
+1. **Merkezi Operasyon** – Testnet sırasında tüm düğümler Plasma ekibi tarafından çalıştırılır. Hızlı iterasyon ve minimum risk sağlar.
+2. **Güvenilir Doğrulayıcı Seti** – Mainnet sonrası güvenilir, hazır ve coğrafi olarak dağılmış küçük bir dış doğrulayıcı grubu ağa katılır.
+3. **İzinsiz Katılım** – Zamanla doğrulayıcı erişimi halka açılır. Protokol düzeyinde güvenlik ve ekonomik önlemlerle desteklenir.
+
+Bu aşamalı yaklaşım, ağı sağlamlaştırdıktan sonra kritik altyapıyı geniş topluluğa devretmeyi mümkün kılar.
+
+## Hızlı Başlangıç
+
+<CardGroup cols={2}>
+  <Card title="Node Türleri" icon="chart-network" iconType="light" color="#307F61" href="/docs/node-operators/setup-and-configuration/node-types" />
+
+  <Card title="Doğrulayıcı Olmayan Node Kurulumu" icon="gears" iconType="light" color="#307F61" href="../setup-and-configuration/non-validator-node-setup" />
+
+  <Card title="Donanım Gereksinimleri" icon="hammer" iconType="light" color="#307F61" href="/docs/node-operators/setup-and-configuration/hardware-requirements" />
+
+  <Card title="Node İletişim Formu" icon="table-list" iconType="light" color="#307F61" href="../setup-and-configuration/operator-onboarding" />
+</CardGroup>

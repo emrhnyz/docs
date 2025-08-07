@@ -1,0 +1,93 @@
+# Yedekleme ve Kurtarma
+
+> Yedekleme prosedürleri, felaket kurtarma ve düğüm taşıma
+
+Güvenilir yedekleme ve kurtarma prosedürleri, düğüm kullanılabilirliğini sürdürmek ve veri kaybına karşı koruma sağlamak için hayati öneme sahiptir. Bu bölümde nelerin yedekleneceği, ne sıklıkla yapılacağı, nerede saklanacağı ve arızadan nasıl geri yükleme yapılacağı açıklanır.
+
+<Note>
+  Mevcut zincir veri boyutunuzun 1.5–2 katı kadar yedekleme depolama alanı planlayın. Yedekleme işlemleri genellikle çalıştırma sırasında %10–20 I/O yükü ekler.
+</Note>
+
+## Neyi Yedeklemelisiniz?
+
+Doğrulayıcı olmayan düğümler, kesintisiz çalışma için gerekli olan kritik durum ve yapılandırma verilerini saklar. Temel bileşenler şunlardır:
+
+* **Blockchain veritabanı**\
+  Tüm Plasma zincir durumunu saklar. Yedeklemeler, tam senkronizasyondan çok daha hızlıdır.
+* **Yapılandırma dosyaları**\
+  Docker Compose dosyaları, `.env` değişkenleri ve özel betikleri içerir.
+* **Anahtar depoları ve peer durumu**\
+  Manuel yeniden yapılandırma olmadan temiz yeniden başlatmayı sağlar. Kimlik doğrulama belirteçleri ve ağ meta verileri içerebilir.
+
+## Yedekleme Stratejisi
+
+### Sıklık
+
+Kullanım ve risk profiline göre yedekleme aralıklarını belirleyin. Günlük anlık görüntüler çoğu doğrulayıcı olmayan düğüm için yeterlidir. Yüksek işlem hacmine sahip kurulumlar, hata durumunda veri kaybını en aza indirmek için daha sık yedekleme gerektirebilir.
+
+### Depolama Hususları
+
+Yedeklemeleri ayrı altyapılarda saklayın: bulut depolama, uzak ana makineler veya çevrimdışı diskler. Yedekleri birincil düğümle aynı yerde tutmaktan kaçının.
+
+<Warning>
+  Yedeklemeleri çalışan düğümle aynı fiziksel makinede saklamayın. Tek bir donanım arızası, tüm veri kaybıyla sonuçlanabilir.
+</Warning>
+
+Harici depolama sağlayıcıları kullanıldığında, hassas veriler için yedekleme şifrelemesi uygulayın. Yedekleme depolamanızın, saklama gereksinimlerinize ve büyüme tahminlerinize uygun kapasiteye sahip olduğundan emin olun.
+
+## Kurtarma Senaryoları
+
+### Kısmi Kurtarma
+
+Yalnızca bazı dosyalar etkilenmişse hedefli geri yüklemeler yapın:
+
+* Yanlış düzenlenen yapılandırma dosyalarını geri yükleyin
+* Senkronizasyon ilerlemesini sıfırlamadan bozuk veritabanını kurtarın
+* Mevcut ağ yapılandırmasını korumak için peer durumunu yeniden uygulayın
+
+Kısmi kurtarma, kesinti süresini azaltır ve tam yeniden senkronizasyonu önler.
+
+### Tam Kurtarma
+
+Düğüm veya ana sistem kaybolduğunda gereklidir:
+
+1. Yeni bir makine veya sanal makine hazırlayın
+2. Blockchain veritabanını ve yapılandırmaları yedekten geri yükleyin
+3. Düğümü başlatın ve ağa yeniden katılın
+4. En son sonlandırılmış blok ile senkronizasyonu doğrulayın
+
+Kurtarma süresi, veri boyutu, bant genişliği ve depolamaya bağlıdır.
+
+## Doğrulama
+
+Yedeklerin bütünlüğünü düzenli olarak doğrulayın:
+
+* Saklanan dosyalarda sağlama (checksum) doğrulaması yapın
+* Kritik olmayan altyapıda periyodik test geri yüklemeleri gerçekleştirin
+* Yedekleme başarısını, süresini ve veri boyutunu izleyin
+
+## En İyi Uygulamalar
+
+* Yedeklemeleri otomatikleştirin ve hata durumunda uyarı verin
+* Yapılandırma dosyaları için sürüm kontrolü kullanın
+* Geri yükleme prosedürlerini üç ayda bir test edin
+* Kurtarma süresini takip ederek RTO/RPO hedeflerini değerlendirin
+
+## Sorun Giderme
+
+### Yedekleme Hataları
+
+* Disk alanını, izinleri ve depolama bağlantısını kontrol edin
+* Giriş/çıkış (I/O) veya zaman aşımı hataları için günlükleri inceleyin
+
+### Bozulma Tespiti
+
+* Sağlama değerlerini düzenli olarak doğrulayın
+* Veritabanı tutarsızlığı belirtileri için senkronizasyon günlüklerini izleyin
+
+### Kurtarma Performansı
+
+* Geri yüklemeyi hızlı depolama ve yerel disklerle optimize edin
+* Depolama altyapısı destekliyorsa paralel I/O kullanın
+
+Sağlam bir yedekleme ve kurtarma planı, veri kaybına karşı koruma sağlar ve kesinti süresini en aza indirir. Düzenli olarak test edin, yedekleri güvenli bir şekilde saklayın ve güvenilir düğüm çalışmasını sürdürmek için yapılandırılmış bir kurtarma süreci izleyin.

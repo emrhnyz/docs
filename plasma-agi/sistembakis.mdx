@@ -1,0 +1,18 @@
+# Sistem Genel Bakışı
+
+Plasma’nın mimarisi, yüksek performanslı bir konsensüs katmanını Ethereum’un EVM yürütme modeli ve güvene en az bağımlı bir Bitcoin köprüsü ile birleştirir. Bu modüler tasarım, geliştiricilere Ethereum’dan bekledikleri araçları sunarken, stablecoin ölçeğinde uygulamalar için tasarlanmış performans ve birlikte çalışabilirlik sağlar.
+
+Plasma’nın merkezinde, konsensüs katmanı olarak **PlasmaBFT** bulunur. Bu, Fast HotStuff’un boru hattı (pipelined) uygulamasıdır. Yürütme ise Rust ile yazılmış modern bir Ethereum yürütme motoru olan **Reth tabanlı istemci** tarafından gerçekleştirilir. Bu iki bileşen, Engine API üzerinden temiz ve gevşek bağlı bir mimaride iletişim kurar.
+
+Bu modelde:
+
+* **PlasmaBFT, blok sıralamasını ve kesinliği (finality) yönetir**
+* **Reth, durum geçişini, işlem yürütmesini ve EVM mantığını yönetir**
+
+Bu ayrım, Plasma’nın hiçbir değişiklik olmadan tam EVM uyumluluğunu miras almasını sağlar. Her sözleşme, opcode ve çağrı, Ethereum ana ağında olduğu gibi çalışır. Geliştiriciler, mevcut araçları, kütüphaneleri ve sözleşme mantığını ödün vermeden kullanabilir.
+
+Fark ise performansta ortaya çıkar. PlasmaBFT, slot tabanlı kesinlik veya harici araçlara ihtiyaç duymadan hızlı ardışık blok teklifleri ve kesinlik sağlayabilir. Konsensüs boru hattı, konsensüs adımlarının paralel işlenmesine olanak tanır, böylece gecikme azalır ve işlem kapasitesi artar.
+
+Bu temelin üzerine inşa edilen **Plasma’nın yerel Bitcoin köprüsü**, saklamalı (custodial) sarılmış varlıklar veya sentetik varlıklar yerine, bir doğrulayıcı ağı tarafından güvence altına alınır. Bu sayede kullanıcılar, BTC’yi güçlü güvenlik garantileri ile EVM ortamına taşıyabilir. Plasma’ya köprülenen varlıklar doğrulanabilir, programlanabilir ve herhangi bir merkezi tarafın kontrolü altında değildir.
+
+Sonraki bölümlerde, konsensüs, yürütme ve köprüleme dahil olmak üzere sistemin her katmanına daha derinlemesine bakacağız ve Plasma’nın yüksek hacimli, stablecoin-yerel akışları ölçekli bir şekilde nasıl desteklediğini anlatacağız.

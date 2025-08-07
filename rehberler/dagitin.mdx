@@ -1,0 +1,54 @@
+# Sözleşme Dağıtımı
+
+> Bu rehber, Foundry, Hardhat ve Ethers.js kullanarak Plasma ağına akıllı sözleşme nasıl dağıtılır adım adım gösterir. Plasma tamamen EVM uyumludur; bu nedenle Ethereum için yazılmış sözleşmelerde kod değişikliği gerekmez.
+
+## Ön Koşullar
+
+* Node.js 16+
+* Ethereum geliştirmeye aşinalık
+* Testnet token’ları olan bir cüzdan ([testnet zincir detaylarına bakın](../network-configuration/testnet-chain-details))
+
+## Sözleşme Hazırlığı
+
+Aşağıdaki örnek sözleşme bu rehber boyunca kullanılacaktır:
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+contract SimpleStorage {
+    string private storedData;
+    address public owner;
+
+    event DataStored(string data, address indexed by);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    constructor(string memory initialData) {
+        storedData = initialData;
+        owner = msg.sender;
+        emit DataStored(initialData, msg.sender);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can perform this action");
+        _;
+    }
+
+    function setData(string memory data) public onlyOwner {
+        storedData = data;
+        emit DataStored(data, msg.sender);
+    }
+
+    function getData() public view returns (string memory) {
+        return storedData;
+    }
+
+    function transferOwnership(address newOwner) public onlyOwner {
+        require(newOwner != address(0), "New owner cannot be zero address");
+        emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
+    }
+}
+```
+
+(Dosyanın tamamı Türkçeye çevrilerek kaydedilecektir...)

@@ -1,0 +1,152 @@
+# Geliştirme Ortamını Kurun
+
+> Araçlarınızı yapılandırın ve akıllı sözleşme geliştirmek için Plasma ağına bağlanın.
+
+Plasma, tamamen EVM uyumludur. Bu sayede standart Ethereum araçlarını kullanabilir, aynı zamanda stablecoin-odaklı uygulamalara özel optimize edilmiş özelliklerden faydalanabilirsiniz. Plasma’nın mimarisi hakkında daha fazla bilgi almak için [Mimari Genel Bakış](../../plasma-chain/architecture/system-overview.mdx) bölümüne bakabilirsiniz.
+
+## RPC Bağlantısını Doğrulama
+
+Genel bir RPC uç noktası `testnet-rpc.plasma.to` adresinde mevcuttur:
+
+```plaintext
+curl --location  --header 'Content-Type: application/json' --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}'
+```
+
+Bu çıktıya benzer bir sonuç dönmelidir:
+
+```output
+{"jsonrpc":"2.0","id":1,"result":"0x9f61b"}
+```
+
+<Tip>
+  Bu uç nokta oran sınırlamasına tabidir. Üretim ortamında veya sık istek yapılacaksa bir [partner RPC sağlayıcısı](../../plasma-chain/tools/rpc-providers) kullanmanız önerilir.
+</Tip>
+
+## Geliştirme Araçlarının Yapılandırılması
+
+Aşağıda [Hardhat](#hardhat) ve [Truffle](#truffle-configuration) için örnekler verilmiştir:
+
+### Hardhat
+
+Plasma testnet ayarlarını içerecek şekilde `hardhat.config.js` dosyanızı oluşturun veya düzenleyin:
+
+```javascript
+module.exports = {
+  networks: {
+    // Plasma testnet
+    plasmaTestnet: {
+      url: "https://testnet-rpc.plasma.to",
+      chainId: 9746,
+      accounts: [<YOUR_PRIVATE_KEYS>]
+    }
+  },
+  solidity: {
+    version: "0.8.20",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    }
+  }
+};
+```
+
+### Truffle Yapılandırması
+
+Truffle kullanıyorsanız `truffle-config.js` dosyanızı aşağıdaki gibi güncelleyin:
+
+```javascript
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+
+module.exports = {
+  networks: {
+    plasmaTestnet: {
+      provider: () => new HDWalletProvider(
+        "<YOUR_MNEMONIC_HERE>",
+        "https://testnet-rpc.plasma.to",
+      ),
+      network_id: 9746,
+      gas: 5500000,
+    }
+  },
+  compilers: {
+    solc: {
+      version: "0.8.20",
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 200
+        }
+      }
+    }
+  }
+};
+```
+
+## Cüzdan Entegrasyonu
+
+### Web3.js Entegrasyonu
+
+```javascript
+const Web3 = require('web3');
+const web3 = new Web3('https://testnet-rpc.plasma.to');
+
+// Bağlantıyı kontrol et
+web3.eth.getBlockNumber()
+  .then(blockNumber => console.log('Plasma node'una bağlanıldı. Mevcut blok:', blockNumber))
+  .catch(error => console.error('Bağlantı hatası:', error));
+```
+
+### Ethers.js Entegrasyonu
+
+```javascript
+const { ethers } = require('ethers');
+const provider = new ethers.providers.JsonRpcProvider('https://testnet-rpc.plasma.to');
+
+// Bağlantıyı kontrol et
+provider.getBlockNumber()
+  .then(blockNumber => console.log('Plasma node'una bağlanıldı. Mevcut blok:', blockNumber))
+  .catch(error => console.error('Bağlantı hatası:', error));
+```
+
+## Kurulumu Doğrulama
+
+Geliştirme ortamınızın doğru şekilde kurulduğunu doğrulamak için basit bir test script’i oluşturun:
+
+```javascript
+const { ethers } = require('ethers');
+
+async function testSetup() {
+  // Plasma node’una bağlan.
+  const provider = new ethers.providers.JsonRpcProvider('https://testnet-rpc.plasma.to');
+
+  // Ağ bilgilerini al.
+  const network = await provider.getNetwork();
+  console.log('Ağa bağlanıldı:', network);
+
+  // Mevcut blok numarasını al.
+  const blockNumber = await provider.getBlockNumber();
+  console.log('Mevcut blok numarası:', blockNumber);
+
+  // Hesap bakiyesini al.
+  const signer = provider.getSigner();
+  const address = await signer.getAddress();
+  const balance = await provider.getBalance(address);
+  console.log('Hesap adresi:', address);
+  console.log('Bakiye:', ethers.utils.formatEther(balance), 'ETH');
+}
+
+testSetup()
+  .then(() => console.log('Kurulum testi başarıyla tamamlandı'))
+  .catch(error => console.error('Kurulum testi başarısız:', error));
+```
+
+## Sorun Giderme
+
+| Sorun                     | Çözüm                                                                 |
+| :------------------------ | :-------------------------------------------------------------------- |
+| **Bağlantı reddedildi**   | RPC uç noktasının doğru ve erişilebilir olduğundan emin olun          |
+| **Gas tahmini hatası**    | Cüzdanda yeterli XPL bulunduğundan emin olun                          |
+| **Solidity sürüm hatası** | Yapılandırmayı Plasma’nın desteklediği derleyici sürümüne göre güncelleyin |
+| **İşlem başarısız**       | RPC URL'sinin ve zincir ID'nin doğru olduğundan emin olun (`9746`)    |

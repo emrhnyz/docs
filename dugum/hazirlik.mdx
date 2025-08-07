@@ -1,0 +1,114 @@
+# Hazırlık
+
+> Plasma ana ağında gelecekteki konsensüs düğümü işlemleri için hazırlık
+
+Bu rehber, beklenen gereksinimleri, hazırlık adımlarını ve erken operasyonel deneyimin nasıl kazanılacağını açıklar.
+
+<Note>
+  Konsensüs düğüm erişimi ana ağdan sonra başlayacaktır. Belirli bir zaman çizelgesi bulunmamaktadır, ancak erken hazırlık, hazır olma durumunuzu ve konumlandırmanızı artırır.
+</Note>
+
+## Neden Şimdi Hazırlanmalı?
+
+**Erken erişim avantajı**\
+İlk operatörler ağın merkezsizleşmesini şekillendirmeye yardımcı olur ve daha az doğrulayıcı rekabetinden fayda sağlayabilirler.
+
+**Uygulamalı deneyim**\
+Doğrulayıcı olmayan düğümleri çalıştırmak, Plasma’nın altyapısı, izleme ve performans desenleriyle tanışmanızı sağlar.
+
+**İtibar ve topluluk uyumu**\
+Aktif testnet katkıcıları, uzun vadeli bağlılık ve güvenilirlik sergiler.
+
+**Dağıtıma hazır olma**\
+Altyapı ve operasyon süreçlerinin erken doğrulanması, ana ağa geçişi hızlandırır.
+
+## Gereksinimler
+
+<Warning>
+  Nihai gereksinimler ana ağa daha yakın bir zamanda onaylanacaktır. Aşağıdaki tahminler Plasma’nın konsensüs tasarımı ve benzer BFT tabanlı ağlara dayanır.
+</Warning>
+
+### Donanım
+
+**Minimum:**
+
+* **CPU**: 4+ çekirdek, 3.0+ GHz
+* **RAM**: 16+ GB
+* **Depolama**: 1+ TB NVMe SSD
+* **Ağ**: 1 Gbps simetrik, düşük gecikme (\<50ms büyük merkezlere)
+
+**Önerilen:**
+
+* **CPU**: 8+ çekirdek, 3.5+ GHz (son nesil)
+* **RAM**: 32+ GB
+* **Depolama**: 2+ TB NVMe SSD, yüksek IOPS
+* **Ağ**: Yedekli birden fazla 1 Gbps bağlantı
+
+**Kurumsal:**
+
+* **CPU**: 16+ çekirdek veya çift soket konfigürasyonu
+* **RAM**: 64+ GB
+* **Depolama**: RAID yedekliliği ile kurumsal NVMe
+* **Ağ**: 10+ Gbps, birden fazla sağlayıcı ile
+
+### Altyapı
+
+* **Çalışırlık**: ≥%99.9, failover mekanizmalarıyla
+* **Güvenlik**: HSM destekli anahtar yönetimi, ağ izolasyonu
+* **İzleme**: Konsensüs durumu ve sistem sağlığı için gerçek zamanlı uyarı
+* **Yedeklilik**: Yedek güç, çok yollu ağ, yedek donanım
+
+## Hazırlık Adımları
+
+### 1. Doğrulayıcı Olmayan Düğümlerle Başlayın
+
+Testnette dağıtım yaparak temel deneyimi edinin. Bkz: [Doğrulayıcı Olmayan Düğüm Kurulum Rehberi.](../setup-and-configuration/non-validator-node-setup)
+
+<Note>
+  **İletişim gereklidir**: Lütfen düğüm dağıtmadan önce [buradan](/docs/node-operators/setup-and-configuration/operator-onboarding) bilgilerinizi gönderin.
+</Note>
+
+**Operasyonel deneyim kazanımı:**
+
+* Donanım boyutlandırma ve performans ayarı
+* Konsensüs uç noktası bağlantısı
+* İzleme ve uyarı sistemi kurulumu
+* Yükseltme ve bakım döngüleri
+
+**Şunlarla deneme yapın:**
+
+* Bölgelere göre gecikme testleri
+* Failover ve yeniden başlatma davranışı
+* Maliyet vs güvenilirlik dengesi
+* Simüle edilmiş yük altında ölçek testleri
+
+### 2. Operasyonel Uzmanlık Kazanın
+
+#### İzleme
+
+Aşağıdaki sistemlerle gözlemlenebilirlik altyapısı kurun:
+
+* **Prometheus** – Metrik toplama
+* **Grafana** – Panolar ve görselleştirme
+* **Alertmanager** – Uyarı yönlendirme
+* **Özel kontroller** – Plasma’ya özgü kontroller ve RPC sağlık denetimi
+
+#### Güvenlik
+
+Şunları tanımlayın ve test edin:
+
+* Anahtar yönetim prosedürleri
+* Ağ segmentasyonu ve güvenlik duvarı kuralları
+* Rol tabanlı erişim ve kimlik doğrulama
+* Olay tespiti ve müdahale planları
+
+#### Dokümantasyon
+
+İç çalışma belgelerini güncel tutun:
+
+* Düğüm dağıtımı ve yapılandırma
+* Rutin işlemler ve yama uygulamaları
+* Hata kurtarma ve olay müdahalesi
+* Performans ayarı ve kapasite planlaması
+
+Şimdiden hazırlanmak, konsensüs katılımı açıldığında daha sorunsuz bir geçiş sağlar. Testnet performansı kanıtlanmış, güvenilir altyapıya ve sağlam süreçlere sahip operatörler, ana ağ doğrulayıcı rolleri için iyi konumlanacaktır.

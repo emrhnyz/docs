@@ -1,0 +1,88 @@
+# Genel Bakış
+
+## Kısaca (TL;DR)
+
+* **Stablecoin’ler için özel tasarlandı**: Sıfır ücretli USD₮ transferleri, özel gas token’ları ve gizli ödemeler için yerel destek
+* **Yüksek performanslı mimari**: Reth üzerine inşa edilmiş modüler EVM yürütme katmanıyla birlikte boru hattı (pipelined) Fast HotStuff konsensüsü
+* **Bitcoin yerel**: Gerçek BTC için güvene en az bağımlı köprü ve doğrudan çapraz varlık programlanabilirliği
+* **EVM uyumlu**: Mevcut Solidity araçlarını herhangi bir değişiklik yapmadan kullanın
+* **Entegre altyapı**: Güvenilir ortaklar aracılığıyla kart basımı, para giriş/çıkış rampaları ve uyumluluk araçları
+* **Derin likidite**: İlk günden itibaren 1 milyar ABD doları üzerinde USD₮ likiditesi ile başlatılır
+
+## Neden Plasma Üzerinde Geliştirme Yapmalı?
+
+Plasma, küresel stablecoin ödemeleri için özel olarak tasarlanmış bir Layer 1 blok zinciridir. Yüksek işlem kapasitesi, stablecoin-odaklı özellikler ve tam EVM uyumluluğunu bir araya getirerek geliştiricilere yeni nesil ödeme ve finansal uygulamaları inşa etmek için gerekli altyapıyı sunar.
+
+Geliştiriciler, hâlihazırda kullandıkları Hardhat, Foundry ve MetaMask gibi araçlar ile uygulama ve protokollerini dağıtabilir. Plasma ayrıca sıfır ücretli USD₮ transferleri, özel gas token’ları ve gizli ödemeler için protokol tarafından yönetilen sözleşmeler sunar. Bu özellikler, stablecoin kullanım senaryoları için özel olarak tasarlanmış olup EIP-4337 ve EIP-7702 akıllı hesap standartlarıyla uyumludur. Henüz protokol seviyesine gömülmemiş olsalar da zamanla blok oluşturma ve yürütme ile daha derin entegrasyon hedeflenmektedir.
+
+Bir geliştirici ister bir cüzdan, ister döviz (FX) sistemi, isterse bir tüketici uygulaması geliştirsin, Plasma ona küresel ölçekte çalışabilecek hız, likidite ve esneklik sağlar.
+
+## Tasarım Felsefesi
+
+Plasma, basit bir prensip üzerine inşa edilmiştir: Stablecoin’ler protokol seviyesinde birinci sınıf vatandaş olmayı hak eder.
+
+Ara katman yazılımlara veya harici sarmalayıcılara güvenmek yerine Plasma, maliyet soyutlama, gizlilik ve programlanabilir gas için yerel araçlar sağlar. Bu araçlar kutudan çıkar çıkmaz kullanılabilir ve zamanla zincirin yürütme mantığıyla daha derin entegre olacak şekilde tasarlanmıştır.
+
+Sonuç olarak geliştiricilere daha az bağımlılıkla, daha hızlı iterasyonla ve daha güçlü garantilerle basit ve sağlam bir deneyim sunulur. Tüm bunlar EVM ekosistemiyle tam uyumluluk korunarak yapılır.
+
+![](https://mintlify.s3.us-west-1.amazonaws.com/plasma-97e11032/images/overview-table.png)
+
+## Mimari Genel Bakış
+
+Plasma, üç temel mimari bileşen üzerine kuruludur:
+
+### 1. PlasmaBFT Konsensüs Katmanı
+
+PlasmaBFT, Fast HotStuff konsensüs algoritmasının boru hattı (pipelined) bir uygulamasıdır. Geleneksel tasarımlarda her aşama sıralı işlenirken, Plasma teklif, oylama ve onaylama süreçlerini eşzamanlı boru hatlarına ayırır. Bu, işlem kapasitesini artırır ve kesinleşme süresini azaltır.
+
+Kesinleşme deterministiktir ve genellikle saniyeler içinde gerçekleşir. Protokol, kısmi senkronizasyon koşullarında güvenlik ve sürekliliği korur ve tam Bizans hata toleransı sağlar.
+
+Bu konsensüs tasarımı, yüksek işlem hacmi, düşük gecikme süresi ve küresel talep altında tutarlı performans gerektiren stablecoin iş yükleri için optimize edilmiştir.
+
+### 2. EVM Yürütme Katmanı
+
+Plasma’nın yürütme ortamı tamamen EVM uyumludur ve Rust ile yazılmış yüksek performanslı, modüler Ethereum yürütme istemcisi Reth üzerine kuruludur. Geliştiriciler, Ethereum ana ağındaki sözleşmeleri değiştirmeden standart Solidity ile dağıtım yapabilir.
+
+Cüzdanlar, SDK’lar, kütüphaneler ve geliştirici çerçeveleri dahil olmak üzere tüm büyük araçlar kutudan çıkar çıkmaz desteklenir. Köprü katmanlarına, özel derleyicilere veya değiştirilmiş sözleşme kalıplarına gerek yoktur.
+
+Plasma, öngörülebilir yürütmeyi tam uyumlulukla birleştirerek EVM-yerel uygulamaların geliştirilmesini ve ölçeklendirilmesini kolaylaştırır.
+
+### 3. Yerel Bitcoin Köprüsü
+
+Plasma, BTC’yi doğrudan EVM ortamına taşımaya olanak tanıyan güvene en az bağımlı bir Bitcoin köprüsü içerir. Köprü saklama gerektirmez ve zamanla merkeziyetsizleşecek olan bir doğrulayıcı ağı tarafından korunur. Bu ağ, merkezi aracılar olmadan Plasma üzerinde Bitcoin işlemlerini doğrular.
+
+Köprülenen BTC, akıllı sözleşmelerde, teminat sistemlerinde ve çapraz varlık akışlarında kullanılabilir. Kullanıcılar fonlarının kontrolünü korurken, zincir üzerinde programlanabilir Bitcoin’e erişim sağlar.
+
+Bu, BTC teminatlı stablecoin’ler, güvene dayalı olmayan teminat sistemleri ve Bitcoin cinsinden finansın tek bir ortamda hayata geçirilmesini mümkün kılar.
+
+## Stablecoin-Temelli Yerel Sözleşmeler
+
+Plasma, stablecoin uygulamaları için özel olarak hazırlanmış, protokol tarafından yönetilen bir sözleşme setini korur. Bu sözleşmeler dar kapsamlı, güvenlik denetiminden geçmiş ve akıllı hesap cüzdanlarıyla doğrudan çalışacak şekilde tasarlanmıştır. Plasma Vakfı tarafından yönetilir ve protokolle birlikte evrilir.
+
+Zamanla, öncelikli işlem dahil etme, yerel çalışma zamanı zorlaması ve protokol seviyesinde teşvikler gibi özelliklerle yürütme ortamına daha derin entegre olmaları hedeflenir.
+
+Bu sözleşmeler kutudan çıkar çıkmaz kullanılabilir ve EIP-4337 ile EIP-7702 gibi hesap soyutlama standartlarıyla uyumludur.
+
+### 1. Sıfır Ücretli USD₮ Transferleri
+
+Plasma, USD₮ transferleri için gas ücretini karşılayan özel bir “paymaster” sözleşmesi içerir. Bu sözleşme yalnızca USD₮ token’ında `transfer` ve `transferFrom` çağrılarına izin verir. Keyfi calldata desteği yoktur, bu da öngörülebilir davranış ve düşük saldırı yüzeyi sağlar.
+
+Sponsorluk uygunluğu, hafif kimlik doğrulama yöntemleri (ör. zkEmail) ile belirlenir ve oran sınırlamaları uygulanır. Onaylandığında, gas ücreti Plasma Vakfı tarafından yönetilen önceden finanse edilmiş bir XPL bakiyesinden karşılanır.
+
+Bu, geliştiricilerin son kullanıcılara sorunsuz ve ücretsiz transferler sunmasını sağlarken maliyet kontrolünü ve spam engellemeyi mümkün kılar.
+
+### 2. Özel Gas Token’ları
+
+Plasma, XPL yerine gas ödemelerinde onaylanmış token’ların kullanılmasına olanak tanıyan protokol tarafından yönetilen bir ERC-20 paymaster sunar. Projeler, uygulamalarında gas soyutlamayı desteklemek için stablecoin veya ekosistem token’larını kaydedebilir.
+
+Genel amaçlı paymaster’ların getirdiği karmaşıklık veya ücretler olmadan, Plasma’nın paymaster’ı dar kapsamlı, denetlenmiş ve ücretsizdir. Mantığı protokol tarafından yönetildiği için üretim ortamında güvenle kullanılabilir.
+
+Bu model, geliştiricilerin yerel token edinme sürecindeki engelleri ortadan kaldırarak stablecoin-öncelikli kullanıcı deneyimleri sunmasını sağlar.
+
+### 3. Gizli Ödemeler
+
+Plasma, USD₮ gibi stablecoin’ler için gizlilik odaklı bir transfer modülü geliştirmektedir. Amaç, kullanıcıların miktarı, alıcı adresini ve not verilerini gizleyebilmesini sağlarken, tam uyumluluğu ve düzenleyici açıklamaları korumaktır.
+
+Sistem isteğe bağlıdır ve bordro, hazine işlemleri ve özel mutabakatlar gibi pratik finansal kullanım durumları için tasarlanmıştır. Standart Solidity ile uygulanacak olup özel opcode veya alternatif sanal makineler gerektirmez.
+
+Modül aktif olarak araştırılmakta olup tamamlandığında protokol tarafından yönetilecektir. Mevcut cüzdan ve dapp’lerle uyumlu olacak şekilde, kullanıcı akışlarında değişiklik gerektirmeden çalışacaktır.

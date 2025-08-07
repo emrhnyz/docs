@@ -11,58 +11,169 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Başlayın",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Giriş",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "baslayin/plasma"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Neden Plasma Üzerine İnşa Edilmeli?",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "baslayin/genel",
+              "baslayin/ornek"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "XPL",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "baslayin/tokeneko",
+              "baslayin/mica",
+              "baslayin/kamu"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Toplum",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "baslayin/baglanti"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Plasma Ağı",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Giriş",
             "pages": [
-              "api-reference/introduction"
+              "plasma-agi/basla"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Ağ Bilgileri",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "plasma-agi/baglan",
+              "plasma-agi/fee",
+              "plasma-agi/farklar"
+            ]
+          },
+          {
+            "group": "Mimarlık",
+            "pages": [
+              "plasma-agi/sistembakis",
+              "plasma-agi/konsen",
+              "plasma-agi/uygulamak",
+              "plasma-agi/btc"
+            ]
+          },
+          {
+            "group": "Stablecoin Yerel Sözleşmeleri",
+            "pages": [
+              "plasma-agi/stablegenel",
+              "plasma-agi/sifirucret",
+              "plasma-agi/gazjeton",
+              "plasma-agi/gizliodeme"
+            ]
+          },
+          {
+            "group": "Aletler",
+            "pages": [
+              "plasma-agi/hesapsoyut",
+              "plasma-agi/analitik",
+              "plasma-agi/blokkasif",
+              "plasma-agi/capraz",
+              "plasma-agi/musluk",
+              "plasma-agi/dizinleyici",
+              "plasma-agi/kahinler",
+              "plasma-agi/rpc"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Ödemeler",
+        "groups": [
+          {
+            "group": "Öğrenelim",
+            "pages": [
+              "odemeler/giris",
+              "odemeler/temel",
+              "odemeler/ornek"
+            ]
+          },
+          {
+            "group": "Aletler",
+            "pages": [
+              "odemeler/odeme"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Node Operatörleri",
+        "groups": [
+          {
+            "group": "Kurulum ve Yapılandırma",
+            "pages": [
+              "dugum/genel",
+              "dugum/turler",
+              "dugum/dogrulayici",
+              "dugum/donanim",
+              "dugum/katilim"
+            ]
+          },
+          {
+            "group": "Bakım",
+            "pages": [
+              "dugum/izleme",
+              "dugum/yukseltme",
+              "dugum/yedekleme",
+              "dugum/sorun"
+            ]
+          },
+                    {
+            "group": "Konsensüs Düğümü",
+            "pages": [
+              "dugum/hazirlik"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Rehberler",
+        "groups": [
+          {
+            "group": "Gelişim",
+            "pages": [
+              "rehberler/basla",
+              "rehberler/gelistirme"
+            ]
+          },
+          {
+            "group": "Varlık Yönetimi",
+            "pages": [
+              "rehberler/tarayici"
+            ]
+          },
+          {
+            "group": "Ağ Yapılandırması",
+            "pages": [
+              "rehberler/zincirayrinti"
+            ]
+          },
+          {
+            "group": "Akıllı Sözleşmeler",
+            "pages": [
+              "rehberler/dagitin",
+              "rehberler/dogrulayin"
+            ]
+          },
+          {
+            "group": "Test ve Kaynaklar",
+            "pages": [
+              "rehberler/xpledin"
             ]
           }
         ]
@@ -119,9 +230,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/plasmatr",
+      "github": " ",
+      "linkedin": ""
     }
   }
 }

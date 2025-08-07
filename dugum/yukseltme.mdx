@@ -1,0 +1,137 @@
+# Yükseltmeler
+
+> Yazılım güncellemeleri, konsensüs yükseltmeleri ve bakım
+
+## Yükseltmeler Neden Önemlidir?
+
+Plasma’nın mimarisi, yüksek işlem hacimli ve stablecoin odaklı kullanım senaryolarını desteklemek için hızla gelişmektedir. Zamanında yapılan yükseltmeler:
+
+* Güvenlik açıklarına karşı koruma sağlar
+* Ödeme iş yükleri için performansı artırır
+* Plasma’nın konsensüs katmanı ve RPC arayüzü ile uyumluluğu sürdürür
+
+Güncel olmayan düğümler senkronizasyon hataları, performans düşüşü veya güvenlik sorunları yaşayabilir. Doğrulayıcı olmayan düğümler genellikle ödeme uygulamaları için kritik RPC trafiğini işlediğinden, güncel kalmak zorunludur.
+
+<Note>
+  Çoğu doğrulayıcı olmayan düğüm yükseltmesi 15–30 dakikalık kesinti gerektirir. Yeni özellikler veya konsensüs değişiklikleri içeren büyük sürümler daha uzun senkronizasyon süreleri gerektirebilir.
+</Note>
+
+## Yükseltme Türleri
+
+<Columns cols={3}>
+  <Card title="Güvenlik yamaları" href="#security-patches">
+    Ödeme altyapısı koruması için kritik düzeltmeler
+  </Card>
+
+  <Card title="Özellik güncellemeleri" href="#feature-updates">
+    Ödeme uygulamaları için yeni yetenekler
+  </Card>
+
+  <Card title="Performans iyileştirmeleri" href="#performance-optimisations">
+    Yüksek hacimli işlem işleme için geliştirmeler
+  </Card>
+</Columns>
+
+### Güvenlik Yamaları
+
+Güvenlik yamaları, doğrulayıcı olmayan istemcilerde, Reth veya bağımlılıklarda bulunan açıkları giderir.
+
+**Örnekler:**
+
+* Durum tutarsızlığı veya konsensüs uyumsuzluğu açıkları
+* RPC erişim kontrolü ve kimlik doğrulama düzeltmeleri
+* Kriptografik kütüphane güncellemeleri
+
+Bu yamalar yayınlandığında derhal uygulanmalıdır.
+
+### Özellik Güncellemeleri
+
+Özellik sürümleri, yeni protokol yeteneklerini etkinleştirir veya yeni uygulama desenlerini destekler.
+
+**Örnekler:**
+
+* Ücretsiz USD₮ transfer geliştirmeleri
+* Özel gas token desteği
+* Yeni veya genişletilmiş RPC metodları
+* Durum sorgu iyileştirmeleri
+* Cüzdan ve borsa entegrasyonu geliştirmeleri
+
+### Performans İyileştirmeleri
+
+Performansa odaklanan sürümler, yürütme hızını, senkronizasyon verimliliğini ve kaynak kullanımını geliştirir.
+
+**Örnekler:**
+
+* Daha hızlı veritabanı okuma/yazma
+* Yük altında daha düşük RPC gecikmesi
+* Daha iyi bellek ve CPU verimliliği
+* Konsensüs senkronizasyon iyileştirmeleri
+
+## Yükseltme Prosedürü
+
+Doğrulayıcı olmayan düğüm yükseltmeleri genellikle yeni bir Docker imajı çekmeyi, yapılandırmaları güncellemeyi ve servisi yeniden başlatmayı içerir.
+
+1. **Uygulamaları bilgilendirin**: Bağlantılı hizmetleri planlı bakım hakkında bilgilendirin.
+2. **Konsensüs uç noktası uyumluluğunu doğrulayın**: Yeni istemci sürümünün mevcut uç noktalarla uyumlu olduğundan emin olun.
+3. **İstemci yapılandırmasını güncelleyin**: Yeni özellikler için gerekli yeni yapılandırmaları uygulayın.
+4. **RPC uç noktası işlevselliğini test edin**: Ödeme uygulamalarıyla uyumluluğu kontrol edin.
+5. **İşlem işleme performansını izleyin**: USD₮ transferleri ve özel gas işlemlerinin normal şekilde çalıştığından emin olun.
+
+Yeni özellikler veya gelişmiş ödeme işleme yetenekleri için gerekli yapılandırma değişikliklerini hizmetleri yeniden başlatmadan önce gözden geçirin. Özellikle özel gas token desteği, sıfır ücretli işlemler veya RPC arayüzlerini etkileyen değişikliklere dikkat edin.
+
+Birden fazla doğrulayıcı olmayan düğüm çalıştırıyorsanız yükseltmeleri aşamalı olarak yapın. Önce kritik olmayan düğümlerle başlayın, ardından ana ödeme altyapısına geçin. İlk yükseltilen düğümün işlem işleme ve ödeme uygulamalarıyla bağlantısını dikkatlice izleyin.
+
+## Yükseltme Sonrası Doğrulama
+
+Yükseltme sonrası konsensüs katmanıyla tam senkronizasyonu ve temel işlevselliği doğrulayın.
+
+**Kontrol Listesi:**
+
+* **Konsensüs senkronizasyonu**: Blok yüksekliği ağ ile uyumlu mu?
+* **RPC işlevselliği**: Ödeme uygulamalarının kullandığı temel uç noktalar çalışıyor mu?
+* **Performans karşılaştırması**: Güncelleme öncesi metriklerle kıyasla
+
+Mevcut metrikleri yükseltme öncesi değerlerle karşılaştırın ve izleme/uyarı sistemlerinin çalışır olduğundan emin olun.
+
+<Tip>
+  Yapılandırma değişikliklerini ve gözlemlenen davranışları belgeleyin. Bu, gelecekteki yükseltmeler ve hata ayıklama süreçleri için güvenilirliği artırır.
+</Tip>
+
+## Geri Alma (Rollback) Prosedürleri
+
+### Ne Zaman Geri Alınmalı?
+
+Şu durumlarda geri almayı düşünün:
+
+* Konsensüs senkronizasyon hatası
+* Şiddetli RPC performans düşüşü
+* Uygulama uyumsuzluğu
+* Güvenlik gerilemesi
+* Bakiyeleri veya transferleri etkileyen veri tutarsızlığı
+
+### Nasıl Geri Alınır?
+
+* Doğrulayıcı olmayan düğüm servislerini durdurun
+* Önceki Docker imajı ve yapılandırmaya geri dönün
+* Servisleri yeniden başlatın ve yeniden senkronize edin
+* RPC uç noktalarını ve işlem işlevselliğini tekrar test edin
+* Uygulama ekiplerini geri dönüş hakkında bilgilendirin
+
+## En İyi Uygulamalar
+
+### Otomasyon ve İzleme
+
+* Docker imaj çekme ve yapılandırma güncellemelerini otomatikleştirin
+* Yapılandırmaları sürüm kontrolü altında takip edin
+* Yükseltme sırasında gözlemlenebilirliği artırın
+* Yeniden başlatma sonrası RPC hata oranlarını, senkronizasyon durumunu ve işlem hacmini yakından izleyin
+
+## Yaygın Sorun Giderme
+
+Yükseltme sonrası sorun yaşarsanız:
+
+* **Konsensüs senkronizasyonu**: Uç nokta bağlantısını, kimlik bilgilerini ve allowlist durumunu kontrol edin
+* **RPC hataları**: Yapılandırmaları, sürüm uyumluluğunu ve güncellenmiş arayüzleri doğrulayın
+* **Performans düşüşü**: Kaynak kullanımını izleyin ve sürüm notlarını gözden geçirin
+
+Plasma doğrulayıcı olmayan düğümlerin yükseltilmesi, stablecoin tabanlı uygulamalar için güvenilir ve güvenli RPC altyapısının sürdürülebilirliği açısından kritik önemdedir. Yapılandırılmış yükseltme ve doğrulama prosedürlerini izlemek riski en aza indirir ve kesintisiz performans sağlar.

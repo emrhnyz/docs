@@ -1,0 +1,125 @@
+# Konsensüs
+
+Plasma, Rust ile yazılmış yüksek performanslı bir Fast HotStuff uygulaması olan **PlasmaBFT** tarafından güvence altına alınır. Bu yapı, Bizans Hata Toleranslı (BFT) konsensüsün güvenliğini düşük gecikmeli kesinlik ile birleştirerek, stablecoin ölçeğinde uygulamalar için gereken yüksek işlem kapasitesini ve deterministik garantileri sağlar.
+
+Konsensüs modülerdir ve Plasma’nın Reth tabanlı yürütme katmanı ile sıkı entegrasyon için tasarlanmıştır. Blok kesinliği, minimum iletişim yükü ile saniyeler içinde sağlanır ve doğrulayıcı seçimi, performans ve öngörülebilir davranış için optimize edilmiş basitleştirilmiş bir Proof of Stake sistemi tarafından yürütülür.
+
+<Warning>
+  Proof of Stake ve Komite Oluşturma mekanizması hâlen aktif geliştirme aşamasındadır. Bu sayfa hedeflenen mimariyi açıklamaktadır, değişikliğe tabi olabilir.
+</Warning>
+
+## Genel Bakış
+
+### Blok Üretimi ve Doğrulayıcı Seçimi
+
+Plasma, doğrulayıcı seçimi için Proof of Stake mekanizmasını kullanır. Diğer PoS ağlarından farklı olarak Plasma’nın staking modeli basitlik ve öngörülebilirlik için tasarlanmıştır:
+
+* Yanlış davranan doğrulayıcıların ödülleri kesilir, teminatı değil
+* Canlılık (liveness) hatalarında ceza uygulanmaz
+* Stake’i anında çekmeye izin veren, kilitsiz opsiyonel staking üzerinde çalışıyoruz
+
+Doğrulayıcılar, konsensüse katılarak ve blok imzalayarak ödül kazanır. Yanlış davranış, sermaye yok edilmesi yerine ödül reddi ile cezalandırılır. Bu tercih, kurumsal beklentilerle uyumlu olmak ve kullanıcı deneyimi riskini azaltmak için yapılmıştır.
+
+### Konsensüs Yayılımı
+
+Plasma’nın konsensüsü üç aşamada devreye alınacaktır:
+
+1. **Güvenilir Doğrulayıcı Lansmanı**  
+   Ana ağ lansmanında, ağı bilinen küçük bir doğrulayıcı grubu güvence altına alacak, böylece istikrar ve protokol iyileştirmeleri sağlanacaktır.
+2. **Doğrulayıcı Genişlemesi**  
+   Doğrulayıcı seti, daha büyük komite boyutlarında yatay performansı test etmek ve yük altında işlem hacmini doğrulamak için ölçeklendirilecektir.
+3. **İzinsiz Katılım**  
+   Plasma, doğrulayıcı erişimini halka açacak, böylece tam merkeziyetsizlik sağlanırken protokol seviyesinde güvenlik garantileri korunacaktır.
+
+## Komite Oluşturma
+
+Komite oluşturma, BFT konsensüsünü performanstan ödün vermeden ölçeklendirmek için tasarlanmıştır. PlasmaBFT’de her turda doğrulayıcıların bir alt kümesi seçilir. Bu, iletişim yükünü azaltır ve tüm katılımcılar arasında mesajlaşmanın getirdiği karesel karmaşıklıktan kaçınılmasını sağlar.
+
+Doğrulayıcılar, kriptografik olarak güvenli, stake ağırlıklı rastgele bir süreçle seçilir. Seçim deterministik, denetlenebilir ve Sybil saldırılarına karşı dayanıklıdır.
+
+Her turda komitedeki doğrulayıcılar önceden bilinir, bu da ek iletişim gerekmeden verimli imza doğrulaması ve çift taraflı işlem (equivocation) tespitine olanak tanır.
+
+## Ödül Kesme, Stake Kesme Değil
+
+Plasma, cezalandırıcı stake kesmeyi bilinçli olarak uygulamaz. Bunun yerine **ödül kesme** mekanizması kullanılır; yanlış davranan veya katılım göstermeyen doğrulayıcılar, sermayelerini kaybetmeden blok ödüllerini alamazlar.
+
+Bu karar üç hedefi yansıtır:
+
+1. **Kullanıcı riskini azaltmak**: Beklenmedik sermaye kaybı, kurumsal bağlamda kabul edilemezdir.
+2. **Gerçek dünya sistemleriyle uyum**: Zayıf performans, toplam fon kaybı değil, düşük getiri ile sonuçlanır.
+3. **Rasyonel davranışı teşvik etmek**: Yanlış davranış beklenen kazancı azaltırsa, rasyonel doğrulayıcılar protokolü takip eder.
+
+Ödül kesme, doğrulayıcı katılımını caydırmadan hata toleransı ve dayanıklılık sağlar.
+
+## HotStuff Genel Bakış
+
+**HotStuff**, iletişim yükünü azaltan ve duyarlılığı artıran modern bir BFT konsensüs protokolüdür; Tendermint gibi önceki modelleri geliştirir.
+
+Temel yapısı:
+
+* HotStuff, lider tabanlı tur yapısında çalışır
+* Doğrulayıcılar, önerilen bloklara oy verir
+* Oyların çoğunluğu toplanınca bir **Quorum Sertifikası (QC)** oluşturulur
+* QC’ler, kesinliği kanıtlamak ve güvenliği korumak için zincirlenir
+
+HotStuff’un sağladığı iyileştirmeler:
+
+* **Doğrusal iletişim karmaşıklığı**
+* **Sabit gecikme olmadan duyarlılık**
+* **Güvenli ve hızlı lider değişimleri**
+
+Bu özellikler, Plasma gibi yüksek frekanslı zincirler için idealdir.
+
+## PlasmaBFT
+
+PlasmaBFT, Fast HotStuff’un boru hattı (pipelined) bir Rust uygulamasıdır. Klasik BFT’nin güvenlik garantilerini korur ancak daha hızlı kesinlik yolları ve düşük gecikme için optimize edilmiştir.
+
+### **Temel Tasarım Özellikleri**
+
+* **Hızlı iki zincirli kesinlik (two-chain commit)**  
+  Yaygın senaryoda bloklar, ardışık iki QC’den sonra kesinleşebilir. Üçüncü aşama yalnızca gerektiğinde devreye girer, böylece tur gecikmesi azalır.
+* **Quorum boyutu ve güvenlik**  
+  PlasmaBFT, `n ≥ 3f + 1` kuralını uygular; burada f, Bizans doğrulayıcı sayısıdır. Quorum boyutu `q = 2f + 1`’dir. Bu, üçte birden fazla doğrulayıcı kötü niyetli olmadıkça iki çelişkili bloğun aynı anda kesinleşmesini engeller.
+* **İmza birleştirme ve QC’ler**  
+  QC’ler, doğrulayıcı imzalarının birleştirilmiş halinden oluşur ve bir bloğun doğrulayıcılar tarafından onaylandığını kanıtlar. QC’ler birbirinin üzerine inşa edildiğinde kesinlik sağlanabilir.
+
+  $QC(b_v) ← QC(b_{v+1}) ← QC(b_{v+2}) ← ...$
+* **Yüksek işlem kapasitesi**  
+  Pipelining ve minimum mesaj karmaşıklığı sayesinde PlasmaBFT, iç testlerde saniyede on binlerce işlemi kesinleştirebilir.
+
+### Pipelining
+
+PlasmaBFT, önceki blok hâlâ kesinleşme sürecindeyken yeni bir bloğun önerilmesine olanak tanır. Bu, blok önerme ve kesinlik adımlarının örtüşmesini sağlayarak işlem kapasitesini artırır.
+
+![](https://mintlify.s3.us-west-1.amazonaws.com/plasma-97e11032/docs/plasma-chain/architecture/images/pipeline.avif)
+
+### View Değişiklikleri ve AggQC’ler
+
+Bir lider başarısız olduğunda veya view değişikliği gerçekleştiğinde PlasmaBFT, canlılığı korumak ve çift işlem yapılmasını (equivocation) önlemek için **toplu QC’ler (AggQC)** kullanır.
+
+* Doğrulayıcılar, en güncel QC’lerini yeni lidere iletir
+* Yeni lider bunları bir AggQC’de birleştirir
+* Bu, bilinen en yüksek bloğu belirler ve güvenli ilerlemeyi sağlar
+
+Bu yöntem, eşik imza şemalarından veya zaman aşımı sertifikalarından (örn. Jolteon, Ditto) farklıdır ancak daha az imza doğrulamasıyla aynı güvenlik hedeflerine ulaşır.
+
+## Özet
+
+PlasmaBFT, Plasma zincirinin bel kemiğidir. Teorik BFT gücünü pratik performans mühendisliği ile birleştirerek:
+
+* Saniyeler içinde kesinlik
+* Yük altında yüksek işlem kapasitesi
+* Dürüst katılımcılara aşırı ceza vermeden hata toleransı
+* Güvenlikten ödün vermeden ölçek için inşa edilmiş mimari
+
+Bu konsensüs modeli, Plasma’ya küresel ölçekte stablecoin tabanlı uygulamaları desteklemek için gereken temeli sağlarken, hem geliştiricilerin hem de kurumların beklentileriyle uyumlu kalır.
+
+## **Kaynaklar**
+
+* J. Kwon, “Tendermint: Consensus without mining,” Taslak v. 0.6, Sonbahar, c. 1, no. 11, s. 1–11, 2014. [Erişim](https://tendermint.com/static/docs/tendermint.pdf)
+* D. Malkhi ve K. Nayak, “HotStuff-2: Optimal Two-Phase Responsive BFT,” 2023, 2023/397. \[Çevrimiçi]. [Erişim](https://eprint.iacr.org/2023/397)
+* M. M. Jalalzai, J. Niu, C. Feng, ve F. Gai, “Fast-HotStuff: A Fast and Robust BFT Protocol for Blockchains,” IEEE Trans. Dependable and Secure Comput., c. 21, no. 4, s. 2478–2493, Tem. 2024. [Erişim](https://www.researchgate.net/profile/Mohammad_Mussadiq_Jalalzai/publication/344828409_Fast-HotStuff_A_Fast_and_Resilient_HotStuff_Protocol/links/61e724eac5e3103375a37c76/Fast-HotStuff-A-Fast-and-Resilient-HotStuff-Protocol.pdf)
+* R. Gelashvili, L. Kokoris-Kogias, A. Sonnino, ve Z. Xiang, “Jolteon and Ditto: Network-Adaptive Efficient Consensus with Asynchronous Fallback,” Financial Cryptography and Data Security, s. 32, 2022. [Erişim](https://arxiv.org/pdf/2106.10362)
+* M. Yin, D. Malkhi, M. K. Reiter, G. G. Gueta, ve I. Abraham, “HotStuff: BFT Consensus with Linearity and Responsiveness,” 2019 ACM PODC Bildirileri, New York, NY, ABD, Tem. 2019, s. 347–356. [Erişim](https://dl.acm.org/doi/pdf/10.1145/3293611.3331591)
+* S. Nakamoto, “Bitcoin: A Peer-to-Peer Electronic Cash System,” 2008. [Erişim](https://bitcoin.org/bitcoin.pdf)
+* M. Castro ve B. Liskov, “Practical Byzantine Fault Tolerance,” OSDI ’99 Bildirileri, Berkeley, CA, ABD: USENIX, 1999, s. 173–186. [Erişim](https://www.usenix.org/legacy/publications/library/proceedings/osdi99/full_papers/castro/castro.ps)

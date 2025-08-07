@@ -1,0 +1,201 @@
+# Doğrulayıcı Olmayan Düğüm Kurulumu
+
+> Reth yürütme istemcisi ile doğrulayıcı olmayan düğümlerin kurulumu ve çalıştırılması için eksiksiz kılavuz.
+
+Non-validator nodes provide RPC access to the Plasma network by monitoring consensus clients and serving application requests. This guide covers deployment, configuration, and operational maintenance for running a Plasma non-validator node.
+
+<Warning>
+  **İletişim Gerekli**: Düğümleri kurmadan önce lütfen bilgilerinizi [buradan](./operator-onboarding) gönderin.
+</Warning>
+
+## Ön Koşullar
+
+Bir doğrulayıcı olmayan düğüm kurmadan önce aşağıdakilere sahip olduğunuzdan emin olun:
+
+* Ekibimizle [buradan](./operator-onboarding) iletişime geçin.
+* Temel Linux yönetim bilgisi.
+* Docker ve Docker Compose yüklü.
+* [Minimum donanım gereksinimlerini](./hardware-requirements) karşılayan bir sunucu.
+
+## Hızlı Başlangıç
+
+Bu önceden paketlenmiş ZIP dosyası ile bir düğüm çalıştırmak basit bir işlemdir.
+
+1. Connect to your server and ensure that **Docker** and **Docker Compose** are installed.
+2. Grab the latest **Non-Validator Node** package from your signup email. If you can't find the package, get in touch with Plasma.
+3. Unzip the package:
+
+   ```shell
+   unzip non-validator-node-setup.zip
+   cd non-validator-node-setup
+   ```
+4. Run the setup script as root:
+
+   ```shell
+   sudo ./setup.sh
+   ```
+
+   This process should take about 10 minutes to complete.
+5. Check that your Docker containers are running:
+
+   ```shell
+   docker ps
+   ```
+6. Setup complete.
+
+## Kurulum Süreci Açıklaması
+
+The setup script automates the deployment of a two-component architecture that enables your node to participate in the Plasma testnet as an non-validator node. While every setup process is slightly different, you can use that script as a template to spin up as many non-validator nodes as you need.
+
+The remainder of this page will focus on the basic steps outlined in the script, and how they might impact your non-validator node.
+
+### Mimari Genel Bakış
+
+Your non-validator node consists of two main components:
+
+* **Plasma Execution Client**: Based on [Reth](https://github.com/paradigmxyz/reth), this handles transaction execution, state management, and provides JSON-RPC endpoints for applications.
+* **Plasma Observer Client**: A lightweight client that monitors the Plasma consensus network without participating in block production or validation.
+
+### Detaylı Kurulum Adımları
+
+#### Ortam Hazırlığı
+
+The script first cleans any existing node data and creates the necessary directory structure:
+
+```shell
+sudo rm -rf ./node/execution
+sudo rm -rf ./node/consensus
+mkdir -p node/execution
+mkdir -p node/consensus
+```
+
+Bu, temiz bir kurulum sağlar ve yürütme ile fikir birliği verileri için ayrı dizinler oluşturur.
+
+#### JWT Kimlik Doğrulama Kurulumu
+
+A shared JWT secret is generated for secure communication between the consensus observer client and execution client:
+
+```shell
+openssl rand -hex 32 | tr -d '\n' > node/jwt.hex
+```
+
+This secret enables authenticated communication through the Engine API.
+
+#### Ağ Kimliği Oluşturma
+
+The script creates cryptographic keys for peer-to-peer networking:
+
+```shell
+openssl ecparam -name secp256k1 -genkey -noout -out ./node/consensus/ec-secp256k1-non-validator.pem
+openssl ec -in ./node/consensus/ec-secp256k1-non-validator.pem -outform DER -no_public -out ./node/consensus/ec-secp256k1-non-validator.der
+```
+
+These keys establish your node's unique identity on the Plasma network and enable secure communication with other nodes.
+
+#### Genesis Yapılandırması
+
+The script retrieves the official Plasma testnet genesis configuration:
+
+```shell
+docker run --rm -i -v ./node:/node ghcr.io/plasmalaboratories/plasma-consensus:0.9.2 plasma-cli dump-genesis --chain testnet > ./node/testnet.json
+```
+
+This configuration defines the initial network state and consensus parameters required to sync with the testnet.
+
+#### Veritabanı Başlatma
+
+Both the execution and consensus components require database initialisation:
+
+**Execution Database:**
+
+```shell
+docker run --rm -i -v ./node:/node ghcr.io/plasmalaboratories/plasma-execution:0.9.2 init --chain /node/testnet.json --datadir /node/execution
+```
+
+**Consensus Database:**
+
+```shell
+docker run --rm -i -v ./node:/node ghcr.io/plasmalaboratories/plasma-consensus:0.9.2 plasma-cli init --chain /node/testnet.json --data-dir /node/consensus
+```
+
+These steps prepare the local databases with the correct genesis state and network parameters.
+
+#### Konteyner Dağıtımı
+
+The script deploys two Docker containers:
+
+**Execution Client (Reth-based):**
+
+```shell
+docker run --network plasma -d --name plasma-execution -p 8551:8551 -v ./node:/node ghcr.io/plasmalaboratories/plasma-execution:0.9.2 node [...]
+```
+
+**Consensus Observer Client:**
+
+```shell
+docker run --network plasma --name plasma-consensus -p 34070:34070 -v ./node:/node -v ./non-validator.toml:/node/non-validator.toml ghcr.io/plasmalaboratories/plasma-consensus:0.9.2 plasma-cli non-validator[...]
+```
+
+### Ağ Yapılandırması
+
+The setup includes connections to official Plasma testnet infrastructure:
+
+#### Bootstrap Düğümleri
+
+Your consensus observer client connects to official Plasma bootstrap nodes:
+
+* `testnet-cs-0.plasmalabs.tech:34070`
+* `testnet-cs-1.plasmalabs.tech:34070`
+* `testnet-cs-2.plasmalabs.tech:34070`
+
+#### Güvenilir Yürütme Eşleri
+
+Your execution client connects to trusted Plasma execution nodes:
+
+* `testnet-ex-0.plasmalabs.tech:30303`
+* `testnet-ex-1.plasmalabs.tech:30304`
+* `testnet-ex-2.plasmalabs.tech:30304`
+
+### Bağlantı Noktası Yapılandırması
+
+The setup exposes specific ports for different services:
+
+| Port    | Service       | Purpose                                                 | External Access                |
+| ------- | ------------- | ------------------------------------------------------- | ------------------------------ |
+| `8551`  | Engine API    | Internal communication between consensus and execution. | No - Internal only.            |
+| `34070` | P2P Consensus | Peer-to-peer communication with other consensus nodes.  | Yes - Requires inbound access. |
+
+#### Güvenlik Duvarı Hususları
+
+Ensure your firewall configuration allows:
+
+* **Outbound connections** on ports `30303`, `30304`, and `34070` for peer discovery and communication.
+* **Inbound connections** on port `34070` for optimal peer connectivity (recommended but not required).
+* **Internal communication** on port `8551` between Docker containers.
+
+The JSON-RPC interface runs on port `8545` within the Docker network but is not exposed externally by default for security reasons.
+
+### Doğrulayıcı Komite Yapılandırması
+
+The `non-validator.toml` configuration includes references to BLS public keys for the current validator set. These keys are provided in the `/node/keys/` directory and allow your observer client to verify consensus messages from active validators.
+
+The configuration references 10 validator public keys (`bls12-381-public-key-0.hex` through `bls12-381-public-key-9.hex`), representing the current testnet validator committee.
+
+## Düğümünüzü İzleme
+
+Once your node is operational, you can monitor its health and synchronisation status. For comprehensive monitoring setup and best practices, see our [monitoring guide](../maintenance/monitoring).
+
+Hızlı durum kontrolleri:
+
+```shell
+# Check container status
+docker ps
+
+# View execution client logs
+docker logs plasma-execution
+
+# View consensus observer client logs  
+docker logs plasma-consensus
+```
+
+Düğümünüz, Plasma test ağı ile anında senkronize olmaya başlayacaktır. İlk senkronizasyon, ağ koşullarına ve donanım özelliklerinize bağlı olarak birkaç dakika sürebilir.

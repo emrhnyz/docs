@@ -1,0 +1,82 @@
+# Hızlı Başlangıç
+
+> Geliştirme ortamını kurun ve Plasma testnet ağına bir akıllı sözleşme dağıtın.
+
+Bu rehber, Hardhat kullanarak geliştirme ortamı kurulumunu, sözleşme dağıtımını ve Plasma'nın EVM uyumlu testnet ağıyla etkileşimi kapsar. Ethereum araçları ve akıllı sözleşme geliştirme konusunda temel bilgiye sahip olduğunuz varsayılır.
+
+## Ön Koşullar
+
+* Node.js 16+
+* Ethereum geliştirme hakkında temel bilgi
+* Tarayıcı cüzdanı (örneğin [MetaMask](https://metamask.io/))
+
+## Ortam Kurulumu
+
+Sözleşmeleri oluşturmak ve dağıtmak için Hardhat kullanılır.
+
+### Hardhat Kurulumu
+
+1. Yeni bir proje klasörü oluşturun ve başlatın:
+
+   ```shell
+   mkdir my-plasma-project
+   cd my-plasma-project
+   npm init -y
+   npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
+   npm install dotenv
+   npx hardhat init
+   ```
+2. JavaScript projesi oluşturmak için adımları takip edin. Projeyi istediğiniz yere kaydedin. Bu hızlı başlangıç için `.gitignore` dosyasına muhtemelen ihtiyacınız olmayacak.
+3. Plasma testnet için `hardhat.config.js` dosyasını yapılandırın:
+
+   ```javascript
+   require("@nomicfoundation/hardhat-toolbox");
+   require("dotenv").config();
+
+   /** @type import('hardhat/config').HardhatUserConfig */
+   module.exports = {
+     solidity: "0.8.28",
+     networks: {
+       plasmaTestnet: {
+         url: process.env.RPC_ENDPOINT
+         chainId: 9746,
+         accounts: [process.env.PRIVATE_KEY] // Bunu bir sonraki adımda ayarlayacağız.
+       }
+     }
+   };
+   ```
+
+## Cüzdan ve Testnet Kurulumu
+
+### MetaMask'e Plasma Testnet Ağı Ekleme
+
+1. MetaMask’i açın ve ağ seçim menüsüne tıklayın.
+2. **Ağ Ekle** → **Ağı manuel olarak ekle** butonlarına tıklayın.
+3. Aşağıdaki bilgileri girin:
+   * **Ağ Adı**: Plasma Testnet
+   * **Yeni RPC URL’si**: `https://testnet-rpc.plasma.to`
+   * **Chain ID**: `9746`
+   * **Para Birimi Sembolü**: `XPL`
+   * **Blok Gezgini URL’si**: `https://testnet.plasmascan.to`
+4. **Kaydet**'e tıklayın ve Plasma Testnet ağına geçin.
+
+### Testnet Tokenları Alın
+
+1. MetaMask’ten cüzdan adresinizi kopyalayın.
+2. [gas.zip/faucet/plasma](https://gas.zip/faucet/plasma) adresini ziyaret edin.
+3. Adresinizi girerek testnet token isteyin.
+4. İşlemin tamamlanmasını bekleyin (birkaç saniye içinde MetaMask’te görünmelidir).
+
+### Ortam Değişkenlerini Ayarlama
+
+1. Hesabınızın [özel anahtarını MetaMask’ten alın](https://support.metamask.io/configure/accounts/how-to-export-an-accounts-private-key/).
+2. Proje kök dizinine `.env` dosyası oluşturun:
+
+   ```shell
+   PRIVATE_KEY=your_private_key_here
+   RPC_ENDPOINT=https://testnet-rpc.plasma.to
+   ```
+
+<Warning>
+  Özel anahtarınızı veya mnemonic'inizi asla versiyon kontrolüne eklemeyin. `.env` dosyanızı `.gitignore`'a eklemeyi unutmayın.
+</Warning>

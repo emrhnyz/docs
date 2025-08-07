@@ -1,0 +1,56 @@
+# Gizli Ödemeler
+
+<Warning>
+  Bu modül hâlen aktif araştırma aşamasındadır ve kesinleşmemiştir. Uygulama detayları değişebilir.
+</Warning>
+
+Plasma, USD₮ için uyumlu ve gizliliği koruyan bir transfer sistemi geliştirmektedir. Amaç, özel token’lar, yeni cüzdanlar veya EVM’in temel davranışında değişiklik olmadan gizli ödemeleri desteklemektir.
+
+Bu, tam anlamıyla bir gizlilik zinciri değildir. Zincir üzerinde hassas transfer verilerini korumak için tasarlanmış, hafif, isteğe bağlı (opt-in) bir modüldür ve birleştirilebilirlik ile denetlenebilirlik özelliklerini korur.
+
+## Gizli Transferler Neden Önemlidir
+
+Stablecoin’ler gerçek dünya finansal faaliyetlerinde kullanılır: maaş ödemeleri, ticari işlemler, mutabakatlar ve sınır ötesi transferler. Ancak zincir üzerindeki her transfer tamamen herkese açıktır; bakiyeler, karşı taraflar ve işlem detayları ifşa olur.
+
+Bu durum, gizliliğin zorunlu olduğu veya en azından kritik olduğu senaryolarda benimsemeyi sınırlar.
+
+Plasma’nın gizli transfer sistemi şunları sağlamayı hedefler:
+
+* Transfer miktarlarının ve alıcı adreslerinin gizlenmesi
+* Referans veriler için şifrelenmiş notlar (memo)
+* Açığa çıkmadan alınabilen veya gönderilebilen özel bakiyeler
+* Gerektiğinde doğrulanabilir kanıtlarla seçici ifşa imkânı
+
+## Neler Üzerinde Çalışıyoruz
+
+Mimari hâlen tasarım aşamasında olmakla birlikte, doğrudan Ethereum standartları üzerine inşa edilmiş pragmatik ve modüler bir yaklaşımı değerlendiriyoruz:
+
+* **Gizli Adres Transferleri**  
+  Transferler, alıcının genel anahtarından türetilmiş tek kullanımlık gizli adreslere gönderilir, böylece hedef adres kamuya kapalı olur. Yalnızca hedef alıcı fonları tespit edip talep edebilir.
+* **Şifrelenmiş Notlar (Encrypted Memos)**  
+  Her transferle birlikte isteğe bağlı olarak şifrelenmiş meta veriler eklenebilir. Yalnızca doğru görüntüleme anahtarına sahip cüzdanlar bu verileri çözebilir.
+* **Özel ↔ Genel Transferler**  
+  Kullanıcılar, özel akışlar ile genel akışlar arasında USD₮ transfer edebilir. Yeni token, wrapper veya köprü gerekmez.
+* **Seçici İfşalar**  
+  Denetlenebilirlik veya uyumluluk için kullanıcılar, belirli işlemleri doğrulanabilir kanıtlarla açıklamayı tercih edebilir. Bu ifşalar isteğe bağlıdır, kapsamlıdır ve kullanıcı kontrolündedir.
+
+## Tasarım Hedefleri
+
+Bu sistem birkaç net kısıt ile geliştirilmektedir:
+
+* **EVM Yerel**  
+  Standart Solidity ile uygulanır. Yeni opcode veya yürütme ortamı gerektirmez.
+* **Modüler ve İsteğe Bağlı**  
+  Sözleşme ve cüzdan seviyesinde isteğe bağlıdır. Genel transferler varsayılan olmaya devam eder ve değişiklik gerektirmez.
+* **DeFi ile Birleşebilir**  
+  Gizli transferler, fonları ayrı bir gizlilik havuzunda izole etmek yerine Plasma ekosistemiyle birlikte çalışmalıdır.
+* **Regülasyon Uyumu**  
+  Denetlenebilirlik ve isteğe bağlı ifşa ile tasarlanır. Sistem, uyumluluğu engellemeden gizliliği sağlamalıdır.
+
+## Sırada Ne Var
+
+Gizli adres oluşturma, indeksleme yöntemleri, şifreleme şemaları ve kanıt mekanizmaları arasında teknik dengeleri hâlen değerlendiriyoruz.
+
+Nihai tasarım, aşırı mühendislik yapmadan veya uyumluluğu bozmadan pragmatik gizlilik, düşük entegrasyon yükü ve geleceğe dönük yükseltme yollarını önceliklendirecektir.
+
+Spesifikasyon geliştikçe daha fazla teknik detay paylaşılacaktır.

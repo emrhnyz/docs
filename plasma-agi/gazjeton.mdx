@@ -1,0 +1,64 @@
+# Özel Gas Token’ları
+
+<Warning>
+  Bu özellik hâlen aktif geliştirme aşamasındadır. Performans, güvenlik ve uyumluluk için yaklaşımlar doğrulandıkça uygulama detayları değişebilir.
+</Warning>
+
+Plasma, kullanıcıların USD₮ veya BTC gibi beyaz listeye alınmış ERC-20 token’larını kullanarak herhangi bir işlemin ücretini ödemesine olanak tanır. Yerel token (XPL) tutma veya yönetme zorunluluğu yoktur. Bu, EVM uyumluluğunu korurken kullanıcı deneyimini iyileştirir.
+
+Bu özellik, Plasma tarafından yönetilen protokol seviyesinde bir **ERC-20 paymaster** ile sağlanır. Geliştiricilerin kendi gas soyutlama mantığını çalıştırmasına veya entegre etmesine gerek yoktur. Cüzdanlar, minimum değişiklikle stablecoin-yerel akışları destekleyebilir.
+
+## Neden Önemli
+
+Çoğu zincir hâlâ kullanıcılardan gas için yerel token tutmasını ister. Bu, stablecoin odaklı uygulamalar için kullanıcı deneyimini bozar.
+
+Harici paymaster’lar bu sorunu çözmeye çalışsa da, kendi dezavantajlarını getirir:
+
+* Çoğu zaman ücret veya ek maliyet uygularlar
+* Fiyatlandırma ve erişim kontrolleri tutarsızdır
+* Güvenilirlik, üçüncü taraf fonlaması ve çalışma süresine bağlıdır
+
+Plasma farklı bir yaklaşım benimser. Protokol, stablecoin ile sorunsuz, ücret almadan gas ödemeyi mümkün kılan standart bir EIP-4337 paymaster işletir. Bu, kullanıcılar için engelleri kaldırır ve geliştiriciler için karmaşıklığı ortadan kaldırır.
+
+## Nasıl Çalışır
+
+1. **Token seçimi**:  
+   Kullanıcı, USD₮ veya BTC gibi onaylı bir stablecoin seçer.
+2. **Oracle fiyatlandırması**:  
+   Paymaster, güvenilir oracle fiyatlarını kullanarak eşdeğer gas maliyetini hesaplar.
+3. **Onay**:  
+   Kullanıcı, paymaster’ın gerekli miktarı harcamasına önceden izin verir.
+4. **Yürütme**:  
+   Paymaster, gas’ı XPL ile karşılar ve stablecoin’i kullanıcıdan düşer.
+
+Bu akış, hem standart EVM hesapları hem de EIP-4337 akıllı cüzdanlarla çalışır.
+
+## Geliştirici Entegrasyonu
+
+Özel gas token’larını desteklemek için özel mantık gerekmez:
+
+* Herhangi bir standart hesap veya akıllı cüzdan kullanın
+* Paymaster için token harcama izni isteyin
+* İşlemleri desteklenen arayüz üzerinden gönderin
+
+Plasma paymaster, gas ödemesi, fiyatlandırma ve denetimi arka planda yönetir.
+
+## Desteklenen Token’lar
+
+İlk destek şunları kapsar:
+
+* Plasma üzerinde USD₮
+* pBTC aracılığıyla köprülenmiş BTC
+
+Kullanım, likidite ve volatiliteye bağlı olarak zamanla ek stablecoin’ler eklenebilir.
+
+## Neden Protokolün Bir Parçası
+
+Ücret soyutlama, bireysel ekiplere bırakıldığında standartlaştırması zordur. Bu altyapının doğrudan protokol tarafından işletilmesi sayesinde Plasma:
+
+* Uygulamalar arasında tutarlı davranışı garanti eder
+* Ek maliyet olmadan ücret-free gas ödemeleri sunar
+* Erişim kurallarını ve oran sınırlamalarını uygular
+* Teşvikleri ağın hedefleriyle hizalar
+
+Bu sayede geliştiriciler ürün mantığına odaklanabilirken, kullanıcılar sorunsuz bir stablecoin-yerel deneyimden yararlanır.

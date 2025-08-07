@@ -1,0 +1,16 @@
+# Yürütme
+
+Plasma, **genel amaçlı bir EVM yürütme ortamı** kullanır ve mevcut Ethereum akıllı sözleşmeleri ile araçlarına tam uyumluluk sağlar. Bu karar basit bir gerçeği yansıtır: stablecoin altyapısının ve uygulamalarının büyük çoğunluğu zaten EVM için inşa edilmiştir. Plasma üzerinde geliştirme yapan geliştiriciler, mevcut sözleşmeleri herhangi bir değişiklik yapmadan, hâlihazırda bildikleri aynı araç ve iş akışlarını kullanarak dağıtabilir.
+
+Plasma’nın yürütme katmanı, Rust ile yazılmış modüler bir Ethereum yürütme istemcisi olan **Reth** tarafından çalıştırılır. Reth, performansı, güvenliği ve modern mimarisi nedeniyle tercih edilmiştir. EVM doğruluğundan ödün vermeden hızlı ve verimli durum yürütmesi sağlar.
+
+Plasma, yeni bir sanal makine, özel dil veya uyumluluk katmanı sunmaz. Her opcode, precompile ve yürütme davranışı Ethereum ana ağı ile birebir aynıdır. Bu da şu avantajları sağlar:
+
+* Solidity veya Vyper ile yazılmış herhangi bir sözleşme Plasma üzerinde aynı şekilde çalışır
+* Hardhat, Foundry ve Remix gibi araçlar kutudan çıkar çıkmaz çalışır
+* Standart arayüzler, ABI’ler ve kütüphaneler uyumlu kalır
+* MetaMask gibi cüzdanlar ve geliştirici SDK’ları için herhangi bir değişiklik gerekmez
+
+Sistem seviyesinde Reth, **Engine API** aracılığıyla PlasmaBFT ile entegre olur; bu, Ethereum’un birleşme (merge) sonrası kullandığı aynı arayüzdür. Konsensüs ve yürütmenin bu şekilde ayrılması, modüler yükseltmelere ve blok üretimi ile işlem işleme arasında temiz bir arabirime olanak tanır.
+
+Sonuç olarak geliştiriciler için tahmin edilebilir, hızlı ve tanıdık bir deneyim ortaya çıkar; altyapıda performans iyileştirmeleri yapılırken stablecoin-yerel özellikler doğrudan bu yapının üzerine eklenir.

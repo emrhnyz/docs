@@ -1,0 +1,142 @@
+# Halka Arz SSS
+
+> XPL halka arzı hakkında sıkça sorulan sorular ve cevaplar
+
+<Tip>
+  **Daha fazla sorunuz mu var?**\
+  \
+  Bu sayfada bulamadığınız bir sorunuzu varsa, [Discord](https://discord.com/invite/plasmafdn) üzerinden destek ekibimize ulaşabilirsiniz.
+</Tip>
+
+### Genel Satış Mekanikleri
+
+<Accordion title="Bir katılımcının bireysel satın alma limiti nedir?">
+  Her katılımcının garanti edilen satın alma miktarı, toplam kasa mevduatları içindeki zaman ağırlıklı payına (unit cinsinden) göre belirlenir.
+
+  Unit’ler stablecoin yatırarak kazanılır ve cüzdanınızın toplam kasa mevduatlarındaki payına göre her dakika dağıtılır.
+</Accordion>
+
+<Accordion title="Mevduatlar halka arzda tahsis garantisi sağlar mı?">
+  Mevduatlar, geçerli yasalara, ilgili hüküm ve koşullara uygunluk ve Sonar üzerinden KYC sürecinin başarılı tamamlanmasına tabi olarak tahsis alacaktır.
+
+  Tam şartlar, mevduat ve satış dönemlerinin başında sunulacaktır. Mevduat ve satış koşullarını güncelleme hakkını saklı tutarız.
+</Accordion>
+
+<Accordion title="Bireysel mevduat limiti var mı?">
+  Evet, bireysel mevduat limiti 50 milyon ABD dolarıdır.
+
+  Bu miktarın üzerinde kazanılan ek unit’ler, halka arzda daha yüksek garanti edilen satın alma miktarına katkı sağlamaz.
+
+  Aynı Sonar hesabına veya kuruluşa bağlı cüzdanlar birleştirilir. Unit hesaplamalarını ayarlama ve kötüye kullanım durumunda katılımcıları diskalifiye etme hakkımız saklıdır.
+</Accordion>
+
+<Accordion title="Toplam kasa mevduatında bir üst sınır var mı?">
+  Toplam kasa mevduatları için sabit bir üst sınır yoktur, ancak mevduat süresince kasa tamamen sınırsız olmayacaktır. Amaç, mevduatları maksimuma çıkarmak değil, Plasma’nın uzun vadeli başarısıyla uyumlu sağlıklı bir dağılım sağlamaktır.
+</Accordion>
+
+<Accordion title="Kasa mevduatım XPL satın almak için otomatik olarak kullanılır mı?">
+  Hayır. XPL satın almak için halka arz sırasında yeni stablecoin yatırmanız gerekir. Kasa mevduatları kullanılamaz.
+</Accordion>
+
+<Accordion title="Mevduat döneminde çekim yapabilir miyim?">
+  Evet. Mevduat döneminde istediğiniz zaman stablecoin’lerinizi çekebilirsiniz. Ancak bunu yapmak, unit’lerinizi çekilen miktara orantılı olarak azaltır.
+</Accordion>
+
+<Accordion title="Daha sonra mevduatımı artırabilir miyim?">
+  Evet. Toplam ve bireysel mevduat limiti aşılmamışsa ve mevduat dönemi açıksa, daha fazla unit kazanmak için mevduatınızı artırabilirsiniz.
+</Accordion>
+
+<Accordion title="Unit’lerimi XPL almak için kullanmazsam ne olur?">
+  Satın alınmayan token’lar, halka arz sırasında garanti edilen tahsisin üzerinde taahhütte bulunan katılımcılara orantılı olarak yeniden dağıtılır.
+</Accordion>
+
+---
+
+### Uygunluk ve KYC
+
+<Accordion title="Halka arz için KYC gerekiyor mu?">
+  Evet, halka arz için KYC gereklidir.
+</Accordion>
+
+<Accordion title="Mevcut Echo kullanıcıları Sonar üzerinden tekrar KYC yapmalı mı?">
+  Hayır. Mevcut Echo kullanıcıları Sonar ile giriş yaparak XPL halka arzına erişebilir, ancak ek adımlar tamamlamaları gerekebilir.
+</Accordion>
+
+<Accordion title="Hangi ülkeler katılamaz?">
+  Şu bölgeler yasaktır: Birleşik Krallık, Çin, Küba, İran, Rusya, Suriye, Kuzey Kore ve Ukrayna.
+
+  Ülkeniz listede yoksa, yerel yasalara tabi olarak ve sürekli inceleme ile katılım mümkündür.
+
+  Mevduat ve satış dönemlerinin başında tam şartlar sunulacaktır. Uygun ülkeler dahil olmak üzere mevduat ve satış koşullarını güncelleme hakkımız saklıdır.
+</Accordion>
+
+<Accordion title="Halka arzdan önce KYC’yi tamamlamazsam ne olur?">
+  Satış bitmeden önce Sonar üzerinden KYC’yi tamamlamazsanız, mevduat döneminde unit kazanmış olsanız bile XPL satın almaya uygun olmazsınız.
+</Accordion>
+
+<Accordion title="Birden fazla cüzdanla katılabilir miyim?">
+  Evet. Sonar hesabınıza en fazla 3 cüzdan bağlayabilirsiniz.
+
+  Tüm bağlı cüzdanlar tek bir katılımcı olarak değerlendirilir ve 50 milyon ABD doları mevduat limitine tabidir.
+</Accordion>
+
+---
+
+### Token ve Kasa Mekanikleri
+
+<Accordion title="Veda kasa sözleşmelerini inceleyebilir miyim?">
+  Evet. Üretim sözleşmeleri lansman öncesi yayımlanmayacak olsa da, Veda aşağıdaki adreslerde incelenebilecek birebir aynı örnek sözleşmeler yayımladı:
+
+  * AccountantWithRateProviders: `0x8970180d667A95ad1399fF7Dd57d4b5061B0244c`
+  * BoringOnChainQueue: `0x6F226E8a684e8d8b70C938BE2aB3087fFeAFd8EA`
+  * BoringVault: `0x0CDF04e97aef579ef20661c0FA445593948790F3`
+  * Lens: `0x9A8eFfe804d8145462924c9C5f000fd05Bf7323e`
+  * ManagerWithMerkleVerification: `0xB156325410A9478FafeB83004750F59B3484AE48`
+  * Pauser: `0x0049EF0D64CcD2902476EE8219c03b5818bDc89B`
+  * QueueSolver: `0x73E81a6dd78172A7A958BB1f95a04F083389C260`
+  * RolesAuthority: `0x2B9A752B7407D37A16A089c2A28d39d08EdB108D`
+  * TellerWithLayerZero: `0xBB4EF6F8A38A0abB9d31cF64A7Ae2e9862b6293c`
+  * Timelock: `0x0000000000000000000000000000000000000000`
+
+  Daha fazla bilgi için:
+  * [Sözleşme mimarisi](https://docs.veda.tech/architecture-overview)
+  * [Güvenlik denetimleri](https://docs.veda.tech/audits)
+</Accordion>
+
+<Accordion title="Mevduatlar USD₮’ye nasıl dönüştürülecek?">
+  Tüm stablecoin mevduatları, Plasma’ya köprülenmeden önce USD₮’ye dönüştürülecektir.
+
+  Bu dönüşüm, desteklenen stablecoin’leri (USDC, DAI, USDS) 1:1 oranında USD₮ ile takas eden beyaz listeye alınmış likidite sağlayıcıları tarafından yapılır.
+</Accordion>
+
+<Accordion title="Stablecoin’ler XPL’ye dönüştürülecek mi?">
+  Hayır. Kasaya yatırılan stablecoin’ler kasada kalır.
+
+  Ana ağ beta lansmanında Plasma üzerinde USD₮0 olarak çekilebilir.
+</Accordion>
+
+<Accordion title="Kasa çekimleri anlık mı?">
+  Hayır. Çekimler işlenmesi 48 saate kadar sürebilir. Bu gecikme, kasanın bütünlüğünü korumaya ve entegre protokoller arasında likiditeyi güvence altına almaya yardımcı olur.
+</Accordion>
+
+<Accordion title="Kasa getirisi nereye gidiyor?">
+  Üçüncü taraf protokoller aracılığıyla elde edilen tüm getiri, Plasma Ana Ağ Beta üzerinde USD₮0 çekerken kullanıcılar tarafından talep edilebilir.
+
+  Plasma bu getiriden herhangi bir pay almaz.
+</Accordion>
+
+<Accordion title="Kasa makbuz token’ımı DeFi’de kullanabilir miyim?">
+  Hayır. Makbuz token’ınızı başka bir cüzdana veya akıllı sözleşmeye aktarmak, çekim olarak değerlendirilir. Unit’leriniz orantılı olarak azaltılır ve çoğu durumda orijinal mevduatınızı çekme hakkınızı kaybedersiniz. Makbuz token’ı ile etkileşim kurmanızı kesinlikle önermiyoruz.
+</Accordion>
+
+<Accordion title="Kasa Plasma’ya nasıl köprülenecek?">
+  Mevduat dönemi sonunda, kasadaki tüm stablecoin’ler Ethereum üzerinde USDT’ye dönüştürülür. Ardından USDT, LayerZero tabanlı bir köprü aracılığıyla Plasma’ya USD₮0 olarak aktarılır. Plasma Ana Ağ Beta’da aynı kasa sözleşmeleri konuşlandırılır. Kullanıcılar, Ethereum kasa makbuz token’larını kullanarak Plasma üzerinde USD₮0 çekebilir.
+</Accordion>
+
+<Accordion title="Her stablecoin için farklı limit var mı?">
+  Hayır. Tüm desteklenen stablecoin’ler (USDT, USDC, USDS, DAI) aynı limit yapısını paylaşır.
+</Accordion>
+
+<Accordion title="ABD vatandaşı olmayanlar için kilit açma takvimi nedir?">
+  XPL token’ları, halka arz bitiminden en az 40 gün sonra, Ana Ağ Beta’da ABD vatandaşı olmayan kişilere dağıtılacaktır.
+</Accordion>

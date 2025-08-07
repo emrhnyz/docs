@@ -1,0 +1,121 @@
+# İzleme (Monitoring)
+
+> Panellerin, performans göstergelerinin ve uyarıların kurulumu
+
+## İzlemenin Önemi
+
+Doğrulayıcı olmayan düğümler, Plasma’nın konsensüs katmanı ile stablecoin transferlerine ve gerçek zamanlı blok zinciri durumuna güvenen uygulamalar arasında kritik bir arayüzdür. RPC yanıtlarındaki kesintiler, senkronizasyon problemleri veya kaynak tüketimi; cüzdanları, borsaları ve ödeme sağlayıcılarını doğrudan etkileyebilir.
+
+İzleme aşağıdakileri sağlar:
+
+* Plasma’nın konsensüs katmanıyla sürekli senkronizasyon
+* RPC isteklerine zamanında yanıtlar
+* Stablecoin bakiyeleri ve transferleri için doğru, güncel durum
+* Sistemsel veya ağ seviyesindeki sorunların erken tespiti
+
+<Info>
+  İzleme, genel kaynak kullanımına yaklaşık %5–10 oranında ek yük getirir. Tipik kurulumlarda, toplanan metrikler ve saklama politikalarına bağlı olarak 0.2–0.5 vCPU ve 1–2 GB RAM ekstra kaynak kullanımı beklenir.
+</Info>
+
+## Temel İzleme Alanları
+
+### Düğüm Senkronizasyonu ve Sağlığı
+
+Doğrulayıcı olmayan düğümünüzün Plasma’nın konsensüs katmanıyla senkronizasyon durumunu izleyin. Buna blok yüksekliği uyumu, konsensüs uç noktası bağlantısı ve durum tutarlılığı dahildir. Kurulum ve sürekli çalıştırma sırasında senkronizasyon hızını izleyerek düğümünüzün Plasma’nın hızlı blok üretimiyle güncel kaldığından emin olun.
+
+Temel göstergeler:
+
+* **Blok işleme hızları**: Plasma’nın saniyenin altındaki blok sürelerine uyum.
+* **Konsensüs uç noktası bağlantısı**: Konsensüs düğümlerine istikrarlı bağlantı.
+* **Durum senkronizasyon ilerlemesi**: Konsensüs katmanıyla senkronizasyon durumu.
+* **İşlem hacmi**: İşlem yükünü işleme kapasitesi.
+
+Bu metrikler, düğümünüzün güncel ödeme verisini sunma yeteneğini etkileyen ağ seviyesinde sorunları veya yerel performans problemlerini tespit etmenize yardımcı olur.
+
+### Sistem Kaynak Kullanımı
+
+Sistem doygunluğu veya yapılandırma sorunlarını tespit etmek için temel sistem metriklerini izleyin:
+
+* **Disk alanı kullanımı ve I/O desenleri**: Plasma’nın işlem hacmi önemli veri artışı yaratabilir.
+* **Ağ bağlantı metrikleri**: Konsensüs uç noktalarına düşük gecikmeli bağlantı için kritiktir.
+* **Yoğun kullanımda bellek kullanımı**: Ödeme uygulamaları trafik artışlarına neden olabilir.
+* **RPC istek işleme için CPU kullanımı**: Stablecoin uygulamaları sık sık bakiye ve durum sorguları yapar.
+
+### Yürütme Katmanı Performansı (Reth)
+
+Plasma, yürütme motoru olarak Reth kullanır. Bu yüzden aşağıdakileri izleyin:
+
+* **İşlem havuzu boyutu ve işlenme durumu**: Özellikle yoğun dönemlerde önemlidir.
+* **EVM yürütme performansı**: DeFi protokolleri için akıllı sözleşme etkileşimleri.
+* **Durum veritabanı performansı**: Mevcut bakiyelerin sunulması açısından kritik.
+* **Engine API iletişimi**: Doğrulayıcı olmayan istemci ile Reth arasındaki gecikme.
+
+## İzleme Mimarisi
+
+### Gerçek Zamanlı Paneller
+
+Paneller, düğüm durumunu anlık olarak görmenizi sağlar ve hızlı hata ayıklamaya destek olur. İçerik olarak şunları dahil edin:
+
+* **Ekosistem sağlık göstergeleri**: USD₮ transfer oranları, gas kullanımı, ödeme uygulama bağlantısı.
+* **Doğrulayıcı olmayan düğüm senkronizasyon metrikleri**: Plasma konsensüsüyle uyum, blok işleme gecikmesi.
+* **Ödeme işleme performansı**: Yaygın RPC işlemleri için yanıt süreleri.
+* **Kaynak kullanım trendleri**: Artan kullanım için kapasite planlaması.
+
+Farklı işlem rolleri için ayrı paneller oluşturarak farklı soyutlama seviyelerine destek sağlayabilirsiniz.
+
+### Uyarı Stratejisi
+
+Uyarılar, kritik hatalarla izlenmeye değer eğilimleri ayırmalıdır. Önerilen kategoriler:
+
+**Ödeme-Kritik Uyarılar:**
+
+* Ödeme işleme etkileyen konsensüs senkronizasyon hataları.
+* İşlem sunumunu etkileyen kaynak tükenmeleri.
+* Plasma konsensüs uç noktalarına ağ bağlantısı kaybı.
+* Ödeme uygulaması SLA'larını etkileyen performans düşüşleri.
+
+**Stablecoin-Özel Uyarılar:**
+
+* USD₮ transferlerinde olağandışı hacim ya da hata desenleri.
+* Özel gas token işlemlerinde anormallikler.
+* Ödeme uygulaması bağlantı hataları veya zaman aşımları.
+* Bakiye sorgularını etkileyen durum tutarsızlıkları.
+
+Aşırı uyarıdan kaçınmak için eşik değerleri geçmiş kullanım verilerine göre ayarlayın. Üretim ortamlarında, yinelenen uyarıları filtreleyen ve önemli olayları kademeli olarak ileten politikalar uygulayın.
+
+## Performans Temel Değerleri
+
+### Beklenen Performans Aralıkları
+
+<Warning>
+  Bu kıyaslamalar testnet koşullarına dayalıdır ve ağ ölçeklendikçe değişebilir.
+</Warning>
+
+Doğrulayıcı olmayan düğümler için hedef çalışma aralıkları:
+
+| Metrik              | Beklenen Aralık                |
+| :------------------ | :----------------------------- |
+| CPU Kullanımı       | Tipik yüklerde %50'nin altında |
+| Bellek Kullanımı    | Ani artışlar için tamponla %75 |
+| Disk I/O Hızı       | Ödeme yükü altında sabit        |
+| Ağ Gecikmesi        | Konsensüs düğümlerine düşük    |
+
+**Plasma-Özel Kıyaslamalar:**
+
+| Metrik                | Beklenen Aralık           |
+| :-------------------- | :------------------------ |
+| Blok senkronizasyonu  | Uç noktaya %1'den az geride|
+| RPC Gecikmesi         | 100ms altında              |
+| Ödeme İşleme Hızı     | Uygulama talebiyle uyumlu  |
+| Durum Tutarlılığı     | Her zaman doğru            |
+
+## Ödeme Altyapısı için Güvenlik Önlemleri
+
+Doğrulayıcı olmayan düğümler çoğunlukla hassas ödeme işlemlerini destekler. İzleme kurulumunuzu temel altyapı güvenliğini kapsayacak şekilde genişletin:
+
+* **Olağandışı ağ trafiği**: Ödeme altyapısına yönelik olası saldırılar.
+* **Yetkisiz erişim girişimleri**: Hassas işlem sistemlerini korumak.
+* **Yapılandırma kaymaları**: Güvenlik veya uyumluluğu etkileyebilecek değişiklikler.
+* **Kaynak kötüye kullanımı**: Kompromize işaret edebilecek olağandışı kullanım desenleri.
+
+Günlükleri güvenli şekilde saklayın ve izleme sistemlerine erişimi kontrol altında tutun. Üretim sistemlerinde, mevcut güvenlik olaylarına müdahale altyapılarına entegre edin.

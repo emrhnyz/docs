@@ -1,0 +1,135 @@
+# Node Türleri
+
+> Plasma üzerindeki farklı node (düğüm) türlerini anlamak.
+
+Plasma, mimari rollere ve operasyonel hedeflere göre çeşitli node türlerini destekler.
+
+<CardGroup cols={3}>
+  <Card title="Doğrulayıcı Olmayan Düğümler" icon="eye" iconType="light" color="#307F61" href="#non-validator-nodes">
+    Ağ durumunu izler ve RPC isteklerini işler \
+    \
+    *Şu anda kullanılabilir*
+  </Card>
+
+  <Card title="RPC Sağlayıcılar" icon="server" iconType="light" color="#307F61" href="#rpc-providers">
+    Kurumsal özelliklere sahip profesyonel altyapılar \
+    \
+    *Şu anda kullanılabilir*
+  </Card>
+
+  <Card title="Konsensüs Düğümleri" icon="shield" iconType="light" color="#307F61" href="#consensus-nodes">
+    Blokları doğrular ve ağı güvenceye alır \
+    \
+    *Gelecekte*
+  </Card>
+</CardGroup>
+
+## Node Türleri
+
+### Doğrulayıcı Olmayan Düğümler
+
+Doğrulayıcı olmayan düğümler, blokzincirini takip eden ancak konsensüs kararlarına katılmayan salt-okunur katılımcılardır. Bu düğümler, konsensüs yükü olmadan zincir verilerine erişmenin hafif bir yolunu sunar.
+
+Tasarım kararlarımızın daha derinlemesine açıklaması için [Genel Bakış](/docs/node-operators/setup-and-configuration/overview) sayfasını inceleyin.
+
+<Note>
+  **Kullanılabilirlik**: Doğrulayıcı olmayan düğümler üçüncü taraf katılımına açıktır. Node kurulumundan önce lütfen bilgilerinizi [buradan](./operator-onboarding) gönderin.
+</Note>
+
+**Temel Yetkinlikler**
+
+* Blok alma: Ağdan blokları alır ve işler
+* Zincir senkronizasyonu: Blokzincirin güncel bir kopyasını tutar
+* Catchup mekanizması: Kaçırılan blokları algılar ve otomatik olarak senkronize eder
+* API erişimi: Doğrulayıcılarla aynı API uç noktalarını sunar
+
+**Teknik Özellikler**
+
+* Node ID (string) ile basitleştirilmiş konfigürasyon
+* Doğrulayıcı halka açık anahtarlarına salt-okunur erişim
+* Bootstrap düğümleri üzerinden bağlantı
+* Blok öneremez, oy veremez veya görünüm değişikliklerini tetikleyemez
+
+**Kurulum**: [Doğrulayıcı Olmayan Node Kurulumu](./non-validator-node-setup) rehberini takip edin.
+
+---
+
+### RPC Sağlayıcılar
+
+Üretim düzeyinde erişilebilirlik ve destek sunan barındırılmış RPC altyapısı.
+
+**Mevcut Sağlayıcılar**
+
+* [**QuickNode**](https://www.quicknode.com/): Küresel yüksek performanslı altyapı, izleme ve uyarı özellikleriyle.
+
+**Avantajlar**
+
+* Anında üretime hazır erişim
+* SLA ve destek dahil
+* Uygulama talebine göre ölçeklenebilirlik
+
+**Kullanım Alanları**
+
+* Yüksek erişilebilirlik gerektiren üretim uygulamaları
+* Altyapı yerine geliştirmeye odaklanan ekipler
+* Kurumsal destek ve garanti isteyen projeler
+
+**Sağlayıcı Listesi:** [RPC Sağlayıcıları](../../plasma-chain/tools/rpc-providers) sayfasına bakın.
+
+---
+
+### Konsensüs Düğümleri
+
+Konsensüs düğümleri, Plasma’nın Fast-Hotstuff BFT protokolünü uygulayan temel katılımcılarıdır. Ağ, `3f+1` doğrulayıcıda `f` hatalı node’a kadar tolerans gösterebilir.
+
+<Note>
+  **Kullanılabilirlik**: Henüz aktif değil. Mainnet sonrası dış katılım başlayacaktır.
+</Note>
+
+**Temel Sorumluluklar**
+
+* Blok üretimi: Doğrulayıcılar, round-robin seçimiyle sırayla blok önerir
+* Oy verme: Gelen blokları doğrular ve Quorum Sertifikaları (QC) oluşturmak için oy verir
+* Konsensüs katılımı: Görünüm değişikliklerine, zaman aşımlarına ve 2-zincir sonlandırma kuralına aktif olarak katılır
+* Durum yönetimi: Oy toplama, görünüm takibi ve blok sonlandırma dahil tüm konsensüs durumunu yönetir
+
+**Teknik Gereksinimler**
+
+* Kriptografik işlemler ve oy toplama için BLS anahtar çifti
+* Doğrulayıcı ID (sayısal) ile tam node konfigürasyonu
+* Blok üretimi için yürütme katmanına (reth) erişim
+* Tekli ve çoklu yayın mesajlaşmaları için P2P ağ özellikleri
+
+**Hazırlık**: [Konsensüs Node Hazırlığı](../consensus-preparation/Preparation) sayfasını takip edin.
+
+---
+
+## Başlarken
+
+### Doğrulayıcı Olmayan Düğümler İçin
+
+**İletişim zorunludur**: Node çalıştırmak isteyen tüm operatörler [form doldurmalıdır](./operator-onboarding).
+
+1. **İletişim formu gönderin**: [Buradan ulaşın](./operator-onboarding).
+2. **Gereksinimleri gözden geçirin**: [Donanım gereksinimlerini](./hardware-requirements) kontrol edin.
+3. **Altyapıyı kurun**: [Kurulum rehberini](./non-validator-node-setup) takip edin.
+4. **İzleme yapılandırması**: [İzleme rehberine](../maintenance/monitoring) göre sistem takibini kurun.
+5. **Topluluğa katılın**: [Discord](https://discord.com/invite/plasmafdn) kanalımıza gelin.
+6. **Güncel kalın**: Konsensüs katılımı zaman çizelgesini takip edin.
+
+### Uygulama Geliştiricileri İçin
+
+1. **Sağlayıcı seçin**: Doğrulayıcı olmayan node veya profesyonel RPC sağlayıcı seçin.
+2. **Ağı yapılandırın**: Geliştirme ortamınıza Plasma testnet’i ekleyin.
+3. **Entegrasyonu test edin**: Uygulamanızı testnet üzerinde deneyin.
+4. **Performansı izleyin**: RPC performansını takip edin ve gerekirse ayarlamalar yapın.
+5. **Üretim planlaması**: Mainnet lansmanı ve ölçekleme için hazırlık yapın.
+
+### Gelecekteki Konsensüs Operatörleri İçin
+
+1. **Erişim isteyin**: [Buradan](./operator-onboarding) bizimle iletişime geçin.
+2. **Doğrulayıcı olmayan node ile başlayın**: Operasyonel deneyim kazanın.
+3. **Altyapı kurun**: Konsensüs hazır sistemlerinizi test edin.
+4. **Topluluğa katılın**: Yönetişim tartışmalarına katılın ve geri bildirim verin.
+5. **Ekonomiyi anlayın**: Stake gereksinimlerini ve ödül yapılarını öğrenin.
+6. **Takvimi izleyin**: Konsensüs erişimi zamanlamasını takip edin.

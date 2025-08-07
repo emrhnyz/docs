@@ -1,0 +1,65 @@
+# Genel Bakış
+
+Plasma, net bir prensip üzerine inşa edilmiştir: **Stablecoin’ler birinci sınıf bir temel unsur olmalı**, genel amaçlı bir zincire sonradan eklenen bir düşünce değil.
+
+Bunu desteklemek için Plasma, stablecoin kullanılabilirliği için tasarlanmış **protokol tarafından işletilen** bir sözleşme setini barındırır. Bu sözleşmeler, geliştiricilere daha iyi varsayılan özelliklerle uygulama geliştirme imkânı sunar: sıfır ücret, stablecoin tabanlı gas ve gizli transferler. Üstelik altyapıyı çatallamadan, wrapper yazmadan veya cüzdan değiştirmeden.
+
+Bu sözleşmeler standart Solidity ile yazılmıştır, tam EVM araç zinciri ile uyumludur ve doğrudan Plasma’nın yürütme katmanına entegre edilmiştir.
+
+## Bu Sözleşmeler Neden Var
+
+Bugün stablecoin’ler, genel ERC-20 token’lar gibi ele alınıyor. Bu küçük ölçekte işe yarasa da, gerçek finansal akışlarda kullanıldığında şu sorunları yaratıyor:
+
+* Ücretler ayrı bir gas token’ı ile ödenmek zorunda
+* Her uygulama veya cüzdan kendi paymaster’ını yönetmek zorunda
+* Özel (gizli) ödemeler mümkün değil
+
+Geliştiriciler, çoğu zaman harici token’lara veya kırılgan entegrasyonlara dayanan parçalı araçları birleştirmek zorunda kalıyor. Bu durum maliyet ekliyor, risk yaratıyor ve benimsemeyi kısıtlıyor.
+
+Plasma farklı bir yaklaşım benimsiyor. Stablecoin altyapısı **protokolün bir parçası**. Zincirin kendisi, uygulamalar ve cüzdanlar tarafından kullanılan çekirdek modülleri çalıştırır ve sürdürür.
+
+## Üç Modül
+
+### Sıfır Ücretli USD₮ Transferleri
+
+Kullanıcıların USD₮ göndermesini gas ödemeden sağlayan protokol tarafından yönetilen bir paymaster sistemi. Kimlik tabanlı oran sınırlamaları kötüye kullanımı önler. Geliştiriciler, `transfer` ve `transferFrom` çağrılarını Plasma’nın önceden hazırlanmış paymaster’ı ile standart akıllı hesap akışlarından yönlendirebilir. XPL gerekmez, üçüncü taraf relayer yoktur.
+
+### Özel Gas Token’ları
+
+Kullanıcılar, USD₮ veya BTC gibi beyaz listeye alınmış stablecoin’ler ile herhangi bir işlemin ücretini ödeyebilir. Plasma, fiyatlandırma ve gas ödemesini doğrudan yöneten bir ERC-20 paymaster çalıştırır. Takas yok, bakiye yönlendirme yok, yerel gas tutma zorunluluğu yok.
+
+### Gizli Ödemeler
+
+Miktarları ve meta verileri gizlenmiş stablecoin transfer sistemi. Maaş ödemeleri, B2B akışlar ve gizliliğe ihtiyaç duyan finansal uygulamalar için tasarlanmıştır; EVM uyumluluğundan ödün vermez.
+
+Her modül, Plasma protokolü tarafından işletilir. Zincir, perde arkasında uygulama, fiyatlandırma ve koordinasyonu yönetir.
+
+## Tam Uyumlu Tasarım
+
+Tüm sözleşmeler:
+
+* **Standart Solidity ve ERC arayüzlerini** kullanır
+* Herhangi bir EVM cüzdanı veya sözleşme sistemiyle çalışır
+* EIP-4337 veya EIP-7702 desteği sunar
+
+Yeni cüzdan formatı veya protokol kilidi yoktur. Cüzdanlar ve uygulamalar, kullanıcı akışlarını veya mimariyi değiştirmeden bu modülleri aşamalı olarak benimseyebilir.
+
+## Neden Protokolün Bir Parçası
+
+Bu sistemler harici olarak da inşa edilebilir. Ancak bireysel uygulamalar tarafından yapıldığında bakım maliyetlidir, standartlaştırmak zordur ve nadiren birlikte çalışabilir.
+
+Protokol seviyesinde çalıştırıldığında Plasma şunları yapabilir:
+
+* **Tüm uygulamalarda tutarlılık sağlamak**
+* **Gas’ı üçüncü taraf fonlama token’ları olmadan sübvanse etmek**
+* **Ortak limitler ve kontroller uygulamak**
+* **Blok üretimi ve yürütme mantığı ile derin entegrasyon sağlamak**
+
+## Ne Beklenmeli
+
+Stablecoin-yerel sözleşme paketi, ana ağ beta lansmanından kısa bir süre sonra devreye alınacaktır. İlk sürüm şunları içerecek:
+
+* Sıfır ücretli USD₮ transferleri
+* USD₮ ve BTC için özel gas token’ları
+
+Her modül, eksiksiz rehberler, entegrasyon örnekleri ve testnet desteği ile birlikte yayınlanacaktır.

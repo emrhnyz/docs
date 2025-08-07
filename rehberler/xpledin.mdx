@@ -1,0 +1,99 @@
+# Testnet XPL Al
+
+> Bu rehber, Plasma testnet ağı için test token’ları (XPL) almanızı adım adım açıklar. Test token’ları, testnet’te akıllı sözleşme dağıtırken, işlem gönderirken ve uygulamalarla etkileşimde bulunurken işlem ücretlerini ödemek için gereklidir.
+
+## Ön Koşullar
+
+Test token’ları talep etmeden önce aşağıdakilere sahip olduğunuzdan emin olun:
+
+* Token alabilecek bir hesabınız. [Tarayıcı cüzdan kurulum rehberine buradan](../asset-management/browser-wallet-setup) ulaşabilirsiniz.
+* Uygunluk kriterlerini karşılayan bir Ethereum ana ağ (mainnet) adresi.
+
+## Uygunluk Kriterleri
+
+Kötüye kullanımı önlemek için faucet üzerinde anti-spam önlemleri mevcuttur. Ethereum ana ağ adresiniz aşağıdaki kriterlerden en az birini karşılamalıdır:
+
+* **Bakiye gereksinimi**: Ethereum ana ağında 0.03 ETH’den fazla bakiye.
+* **Yaş gereksinimi**: Adresinizin en az 3 işlem geçmişi bulunmalı.
+
+Faucet, cüzdanınızı bağladığınızda bu kriterleri otomatik olarak kontrol eder.
+
+## Test Token’ları Alma
+
+### Faucet üzerinden token talep etme
+
+1. [gas.zip/faucet/plasma](https://gas.zip/faucet/plasma) adresini ziyaret edin.
+2. **Cüzdanı Bağla (Connect Wallet)** butonuna tıklayın ve MetaMask’i seçin.
+3. MetaMask’te bağlantıyı onaylayın.
+4. **Plasma Testnet** ağına bağlı olduğunuzdan emin olun (Ethereum ana ağına değil).
+5. Cüzdan adresiniz arayüzde görünmelidir.
+6. **XPL Talep Et (Request XPL)** butonuna tıklayın.
+7. İşlemin tamamlanmasını bekleyin (genellikle 5–10 saniye sürer).
+
+### Günlük Limitler
+
+| Limit               | Değer                                        |
+| ------------------- | -------------------------------------------- |
+| Talep başına miktar | 10 XPL                                       |
+| Sıklık              | Her adres için günde bir kez                 |
+| Yenilenme süresi    | Son başarılı isteğinizden 24 saat sonra      |
+
+Son 24 saat içinde zaten token talep ettiyseniz, faucet bir sonraki talep süresini gösterecektir.
+
+## Token’larınızı Doğrulama
+
+Token talep ettikten sonra cüzdanınıza ulaştığını doğrulayın:
+
+### Cüzdan Bakiyesini Kontrol Etme
+
+1. Tarayıcı cüzdanınızda **Plasma Testnet** ağına bağlı olduğunuzdan emin olun.
+2. Ana cüzdan görünümünde XPL bakiyenizi görebilmelisiniz.
+3. Bakiye hemen güncellenmiyorsa birkaç saniye bekleyin ve sayfayı yenileyin.
+
+### Blok Gezgini Üzerinden Doğrulama
+
+Ek onay için işlemi bir [blok gezgini](../../plasma-chain/tools/block-explorers) üzerinde kontrol edin:
+
+1. Cüzdan adresinizi kopyalayın.
+2. Aşağıdaki sitelerden birine gidin:
+   * [Gas.zip](https://plasma.gas.zip/)
+   * [testnet.plasmascan.to](https://testnet.plasmascan.to/)
+3. Arama çubuğuna adresinizi yapıştırın.
+4. Faucet’ten gelen son gelen işlemi bulun.
+
+İşlemde 10 XPL’in adresinize transfer edildiğini görmelisiniz.
+
+## Sorun Giderme
+
+### "Adres uygun değil" Hatası
+
+Adresiniz uygunluk kriterlerini karşılamıyor olabilir:
+
+* **Ana ağ bakiyesini kontrol edin**: Ethereum mainnet’te 0.03 ETH’den fazla bakiyeniz olduğundan emin olun.
+* **Hesap yaşı**: En eski işleminizin 6 aydan eski olduğuna emin olun.
+* **Farklı bir adres deneyin**: Daha eski bir Ethereum adresiniz varsa onu kullanın.
+
+### "Rate limit exceeded" Hatası
+
+Son 24 saat içinde zaten token talep ettiniz:
+
+* **Yenilenme zamanını bekleyin**: Talep edebileceğiniz zamanı gösteren geri sayımı kontrol edin.
+* **Farklı bir adres kullanın**: Birden fazla uygun adresiniz varsa başka bir adresle deneyin.
+
+### Token’lar Cüzdanda Görünmüyor
+
+Talep başarılı olduğu hâlde token’lar görünmüyorsa:
+
+* **Ağ bağlantısını kontrol edin**: MetaMask’in Plasma Testnet’e (Chain ID 9746) bağlı olduğundan emin olun.
+* **Bekleyin**: İşlemler genellikle saniyeler içinde onaylanır ama ağ gecikmeleri yaşanabilir.
+* **Blok gezgini üzerinden doğrulayın**: İşlemin başarılı olduğunu doğrulamak için explorer kullanın.
+* **Cüzdanı yenileyin**: MetaMask’i yenileyin veya tarayıcıyı yeniden başlatın.
+
+### Ağ Bağlantı Sorunları
+
+Faucet sitesi yüklenmiyor veya bağlantı kurulamıyorsa:
+
+* **İnternet bağlantınızı kontrol edin**: Kararlı bir bağlantınız olduğundan emin olun.
+* **Farklı tarayıcı deneyin**: Bazı uzantılar cüzdan bağlantısını engelleyebilir.
+* **Tarayıcı önbelleğini temizleyin**: Önbellek ve çerezleri temizleyin.
+* **Reklam engelleyicileri devre dışı bırakın**: Bazı reklam engelleyiciler cüzdan bağlantılarını engelleyebilir.

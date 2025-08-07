@@ -1,0 +1,76 @@
+# Bitcoin Köprüsü
+
+<Warning>
+  Bitcoin köprüsü ve pBTC ihraç sistemi hâlen aktif geliştirme aşamasındadır ve ana ağ beta lansmanında aktif olmayacaktır. Bu sayfa, hedeflenen mimariyi açıklamaktadır ve değişikliğe tabi olabilir.
+</Warning>
+
+Plasma’nın Bitcoin köprüsü, saklamacılara (custodian), sentetik varlıklara veya izole edilmiş sarılı (wrapped) token’lara güvenmeden, yerel BTC’nin akıllı sözleşmelerde kullanılmasını sağlar. Sistem, gerçek Bitcoin ile 1:1 desteklenen, zincirler arası çalışabilen ve Bitcoin ana katmanına doğrulanabilir bir bağlantıyı koruyacak şekilde tasarlanmış **pBTC**’yi sunar.
+
+Sistem; onchain doğrulama yapan bir doğrulayıcı ağı, para çekme işlemleri için MPC tabanlı imzalama ve LayerZero’nun OFT (Omnichain Fungible Token) çerçevesine dayalı bir token standardını birleştirir. Bu yaklaşım, birlikte çalışabilirlik, güvenlik ve denetlenebilirlik arasında denge kurar ve zamanla güvenin daha da minimize edilmesi için net bir yol sunar.
+
+## Mimari Genel Bakış
+
+### 1. BTC Yatırma → Plasma üzerinde pBTC
+
+Kullanıcılar, BTC’yi Plasma tarafından kontrol edilen bir yatırma adresine göndererek başlar. **Bağımsız doğrulayıcılardan** oluşan bir ağ, kendi tam Bitcoin node’unu ve indeksleyicisini çalıştırarak Bitcoin blok zincirini gelen işlemler için izler.
+
+Yatırma işlemi onaylandıktan sonra doğrulayıcılar, işlemi bağımsız olarak onaylar ve Plasma üzerinde **pBTC** basma sürecini başlatır. pBTC, LayerZero’nun **Omnichain Fungible Token (OFT)** standardı kullanılarak ihraç edilir. Bu, pBTC’nin yeniden sarılmadan veya sentetik türevlerine bölünmeden birden fazla zincir arasında hareket etmesini sağlar.
+
+pBTC, Plasma üzerinde standart bir ERC-20 token’dır ve LayerZero’ya bağlı diğer zincirlere yerel olarak köprülenebilir.
+
+### 2. Geri Alma → BTC Çekme
+
+Çekim yapmak için kullanıcılar Plasma üzerinde pBTC’lerini yakar ve hedef Bitcoin adresleriyle birlikte bir çekim talebi gönderir. Doğrulayıcılar, yakma işlemini onaylar ve talebi bağımsız olarak doğrular. Onaylandıktan sonra, karşılık gelen BTC’yi kullanıcıya geri gönderecek Bitcoin işlemini imzalamak için **eşik imza şeması (TSS)** kullanılır.
+
+İmza süreci, hiçbir doğrulayıcının tam özel anahtarı tek başına tutmamasını sağlamak için **Çok Taraflı Hesaplama (MPC)** veya eşik Schnorr imzaları kullanır. Bir işlem ancak doğrulayıcıların yeterli çoğunluğu imzaladığında gerçekleştirilir.
+
+## Doğrulayıcı Ağı
+
+Köprü, zamanla merkeziyetsizleştirilecek bir doğrulayıcı ağı tarafından güvence altına alınır. Bu doğrulayıcılar, kendi altyapılarını işleten **bağımsız, yüksek güvenilirlikte kurumlar** olacaktır. Bunlara stablecoin ihraççıları, altyapı sağlayıcıları ve ekosistem katılımcıları dâhildir. İlk doğrulayıcı listesi, ana ağ lansmanından önce yayımlanacaktır.
+
+Her doğrulayıcı:
+
+* Tam bir Bitcoin node’u ve indeksleyici çalıştırır
+* Yatırma ve yakma işlemlerini bağımsız olarak izler
+* Güvenli alanlar (secure enclave) içinde MPC imzalamaya katılır
+* Zincir üzerinde imzalı onaylar yayımlayarak herkese açık doğrulama sağlar
+
+Tüm doğrulama ve imzalama işlemleri şeffaf ve gözlemlenebilirdir. Koordinasyon, denetlenmiş kriptografik araçlar kullanılarak güvenli ortamlarda gerçekleştirilir. Hiçbir doğrulayıcı tek taraflı kontrol yetkisine sahip değildir. Hiçbir anahtar tek bir yerde tam olarak bulunmaz.
+
+Ağ, başlangıçta izinli (permissioned) olacak ancak staking, slashing ve zincir üstü doğrulama sistemleriyle zaman içinde genişleyecektir.
+
+Bu yapı, merkezi saklamacılara kıyasla daha düşük risk ve anonim multisig çözümlerine kıyasla daha fazla operasyonel hesap verebilirlik sunar.
+
+## pBTC Neden OFT Kullanıyor
+
+Bugün çoğu BTC köprüsü, zincir başına sarılı token çıkaran saklamacılara dayanır. Bu, arzı böler, birlikte çalışabilirliği sınırlar ve güven gereksinimlerini artırır. pBTC ise farklıdır. Bir kez ihraç edilir ve tüm LayerZero bağlı zincirlerde tek bir token olarak yaşar.
+
+OFT standardı şunları sağlar:
+
+* **Sarılma veya sentetik yeniden tabanlama olmadan yerel zincirler arası transferler**
+* **Tek bir arz ve gerçek BTC’ye doğrudan dayalı doğruluk kaynağı**
+* **Tam ERC-20 uyumluluğu**, DeFi ve cüzdan altyapısı genelinde entegrasyon
+
+Bu özellikler, pBTC’yi wBTC ve cbBTC gibi eski sarılı Bitcoin varlıklarına kıyasla daha birlikte çalışabilir ve şeffaf bir alternatif hâline getirir.
+
+## Güvenlik ve Güven Varsayımları
+
+Köprü, riski en aza indirmek için katmanlı güvenlik önlemlerine dayanır:
+
+* Her doğrulayıcı tarafından kendi Bitcoin node’u ile **bağımsız gözlem**
+* Yatırma ve çekimlerde **çoğunluk (quorum) onayı**
+* Anahtar materyali güvenli alanlara bölünmüş şekilde **MPC veya TSS ile eşik imzalama**
+* **Zincir üstü onaylar** ile herkese açık denetlenebilirlik
+* **Acil durum kesiciler** ve olağan dışı durumlara yanıt için oran sınırlamaları
+
+Tüm işlemler şeffaftır. Sistem, kullanıcıları ve paydaşları tarafından izlenebilir, yükseltilebilir ve hesap verebilir olacak şekilde inşa edilmiştir.
+
+## Gelecek Yükseltmeler
+
+Doğrulayıcı tabanlı köprü, evrimleşecek şekilde tasarlanmıştır. Daha fazla güven minimizasyonu sağlayabilecek gelişmeleri takip ediyoruz, bunlar arasında:
+
+* Zincir üstü doğrulama devreleriyle **BitVM tarzı Bitcoin doğrulaması**
+* Zincirler arası durum onayları için **sıfır bilgi ispatları**
+* **OP_CAT** gibi özel doğrulama mantığına imkân tanıyacak Bitcoin opcode yükseltmeleri
+
+Bu araçlar olgunlaştıkça, Plasma bunları kullanıcı deneyimi veya birlikte çalışabilirlikten ödün vermeden seçici olarak benimseyecektir.

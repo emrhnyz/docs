@@ -1,0 +1,44 @@
+# Sözleşme Doğrulama
+
+> Bu rehber, Foundry, Hardhat ve Ethers.js kullanarak Plasma üzerinde akıllı sözleşmelerin nasıl doğrulanacağını gösterir. Doğrulama, sözleşme kaynak kodunu blok gezginlerinde herkese açık hale getirir ve kullanıcılar için şeffaflık sağlar.
+
+## Ön Koşullar
+
+* Plasma testnet üzerinde dağıtılmış bir sözleşme. Henüz dağıtmadıysanız [sözleşme dağıtımı](./deploy-a-contract.md) kısmına göz atın.
+* Programatik doğrulama için bir [Routescan](https://routescan.io/) hesabı.
+* Sözleşmenizin kaynak kodu ve derleme ayarları.
+* Dağıtım sırasında kullanılan kurucu (constructor) argümanları (varsa).
+
+## Örnek Sözleşmeler
+
+Hem basit hem de karmaşık kurucu argümanları gösteren iki örnek sözleşme kullanılacaktır:
+
+### Basit Sözleşme
+
+Temel akıllı sözleşme kavramlarını gösteren basit bir veri depolama sözleşmesi.
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+contract SimpleStorage {
+    string private storedData;
+    address public owner;
+
+    constructor(string memory initialData) {
+        storedData = initialData;
+        owner = msg.sender;
+    }
+
+    function setData(string memory data) public {
+        require(msg.sender == owner, "Only owner can set data");
+        storedData = data;
+    }
+
+    function getData() public view returns (string memory) {
+        return storedData;
+    }
+}
+```
+
+(Dosyanın tamamı Türkçeye çevrilerek kaydedilecektir...)

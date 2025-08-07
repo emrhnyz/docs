@@ -1,0 +1,56 @@
+# Tarayıcı Cüzdanı Kurulumu
+
+> Tarayıcı cüzdanını Plasma Testnet ağına bağlayın
+
+Bu rehber, Plasma testnet ağıyla kullanılmak üzere tarayıcı cüzdanlarının nasıl yapılandırılacağını açıklar.
+
+## Ön Koşullar
+
+* MetaMask veya benzeri bir tarayıcı uzantısının kurulu ve yapılandırılmış olması
+* Tarayıcı cüzdan arayüzleriyle temel düzeyde aşinalık
+
+## Ağ Yapılandırması
+
+Plasma testnet ağı eklenirken aşağıdaki ayarları kullanın:
+
+| Parametre           | Değer                             |
+| ------------------- | --------------------------------- |
+| Ağ adı              | Plasma Testnet                    |
+| Yeni RPC URL'si     | `https://testnet-rpc.plasma.to`  |
+| Chain ID            | `9746`                            |
+| Para birimi sembolü | `XPL`                             |
+| Blok gezgini URL’si | `https://testnet.plasmascan.to/` |
+
+<Tip>
+  Ortak RPC uç noktası olan `testnet-rpc.plasma.to` adresini kullanabilir veya [RPC sağlayıcıları](../../plasma-chain/tools/rpc-providers) üzerinden özel bir uç nokta alabilirsiniz.
+</Tip>
+
+## MetaMask
+
+1. MetaMask’i açın.
+2. Üst kısımdaki ağ açılır menüsüne tıklayın.
+3. **Ağ Ekle** → **Ağı manuel olarak ekle** seçeneğine tıklayın.
+4. Plasma ağı bilgilerini girin (yukarıdaki tabloya bakın).
+5. **Kaydet** butonuna tıklayın.
+
+Kaydettikten sonra MetaMask otomatik olarak Plasma Testnet ağına geçecektir. Seçilen ağın **Plasma Testnet** olduğundan emin olun.
+
+### Bağlantıyı Doğrulama
+
+* Plasma Testnet ağı, ağ seçici menüsünde görünür
+* Henüz token almadıysanız bakiyeniz `0 XPL` olarak görünür
+* Blok gezgini bağlantısı [Plasma Testnet Explorer](https://testnet.plasmascan.to/) sayfasını açar
+
+## Sorun Giderme
+
+### Bağlantı Sorunları
+
+* RPC URL’sinin doğru olduğundan emin olun (`https://testnet-rpc.plasma.to`)
+* QuickNode veya başka bir sağlayıcı kullanıyorsanız uç nokta durumunu kontrol edin
+* Gerekirse tarayıcıyı ve cüzdan uzantısını yeniden başlatın
+
+### İşlem Hataları
+
+* Gas ücretleri için yeterli `XPL` bulunduğundan emin olun
+* Chain ID’nin `9746` olduğundan emin olun
+* Ağ aktivitesini doğrulamak için [Plasma Explorer](https://testnet.plasmascan.to/) kullanın

@@ -182,19 +182,19 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Explorer",
+          "href": "https://testnet.plasmascan.to/",
+          "icon": "binoculars"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "Faucet",
+          "href": "https://plasmatrkiye.mintlify.app/plasma-agi/musluk",
+          "icon": "faucet"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Plasma Türkiye",
+          "href": "https://x.com/PlasmaTR",
+          "icon": "brand-twitter"
         }
       ]
     }
@@ -212,8 +212,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Plasma.to",
+      "href": "https://www.plasma.to/"
     }
   },
   "contextual": {

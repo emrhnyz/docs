@@ -194,7 +194,7 @@
         {
           "anchor": "Plasma Türkiye",
           "href": "https://x.com/PlasmaTR",
-          "icon": "brand-twitter"
+          "icon": "x"
         }
       ]
     }
@@ -206,8 +206,8 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Blog",
+        "href": "https://www.plasma.to/insights"
       }
     ],
     "primary": {
@@ -231,8 +231,7 @@
   "footer": {
     "socials": {
       "x": "https://x.com/plasmatr",
-      "github": "https://github.com/emrhnyz",
-      "linkedin": "https://www.linkedin.com/in/emirhan-yildiz25"
+      "x": "https://x.com/PlasmaFDN"
     }
   }
 }
